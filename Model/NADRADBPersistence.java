@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class NADRADBPersistence {
 
-    private static final String FILENAME = "SCD_A1/src/Model/NADRADB.txt";
+    private static final String FILENAME = "Model/NADRADB.txt";
 
     public static void writeToFile(ArrayList<NADRARecord> nadraRecords) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME))) {

@@ -2,6 +2,7 @@ package Controller;
 
 import Model.*;
 
+import javax.swing.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -40,6 +41,34 @@ public class CustomerMenu extends Menu {
         } while (true);
     }
 
+    public void runMenuGUI() {
+        View.CustomerMenu customerMenu = new View.CustomerMenu(this);
+    }
+
+    public void executeMenuTask(int choice, JFrame customerMenu) { //FOR GUI
+        switch (choice) {
+            case 1:
+                // TODO: create GUI version
+                viewBills(MasterPersistence.getInstance().getBillingRecords(), customerMenu);
+                break;
+            case 2:
+                // TODO: create GUI version
+                estimateUpcomingBills(MasterPersistence.getInstance().getTariffTaxes());
+                break;
+            case 3:
+                // TODO: create GUI version
+                updateCNICExpiry(MasterPersistence.getInstance().getNadraRecords());
+                break;
+            default:
+                JOptionPane.showMessageDialog(customerMenu, "Invalid choice!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void viewBills(ArrayList<BillingRecord> billingRecords, JFrame customerMenu) {
+
+    }
+
+    // TODO: remove upon successful refactoring of new method
     public void executeMenuTask(int choice, final ArrayList<TariffTax> tariffs, ArrayList<NADRARecord> NADRARecords, ArrayList<BillingRecord> billingRecords) {
         switch (choice) {
             case 1:
@@ -57,7 +86,6 @@ public class CustomerMenu extends Menu {
     }
 
     public void viewBills(ArrayList<BillingRecord> billingRecords) {
-        // TODO
         System.out.println("Viewing bills");
         for (BillingRecord br : billingRecords) {
             if (br.getCustomerID().equals(myCustomer.getUsername())) {
@@ -67,7 +95,6 @@ public class CustomerMenu extends Menu {
     }
 
     public void estimateUpcomingBills(ArrayList<TariffTax> tariffTaxes) {
-        // TODO
         Scanner input = new Scanner(System.in);
         float currentRegularUnits;
         float currentPeakUnits = 0.0f;

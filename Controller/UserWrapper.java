@@ -35,7 +35,7 @@ public class UserWrapper {
         if (loginStatus == 1) {
             this.setMyUser(new Employee(username, password));
         } else if (loginStatus == 2) {
-            this.setMyUser(new Customer(username, password));
+            this.setMyUser(Customer.getMatchingCustomer(username, password));
         } else this.setMyUser(null);
         return loginStatus;
 
@@ -47,7 +47,7 @@ public class UserWrapper {
         if (loginStatus == LoginMenu.EMPLOYEE_ID) {
             this.setMyUser(new Employee(username, password));
         } else if (loginStatus == LoginMenu.CUSTOMER_ID) {
-            this.setMyUser(new Customer(username, password));
+            this.setMyUser(Customer.getMatchingCustomer(username, password));
         } else this.setMyUser(null);
         return loginStatus;
 

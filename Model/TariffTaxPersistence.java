@@ -6,7 +6,7 @@ import java.util.List;
 
 public class TariffTaxPersistence {
 
-    private static final String FILENAME = "SCD_A1/src/Model/TariffTaxInfo.txt";
+    private static final String FILENAME = "Model/TariffTaxInfo.txt";
 
     public static void writeToFile(List<TariffTax> tariffs) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME))) {

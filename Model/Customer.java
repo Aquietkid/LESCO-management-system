@@ -1,7 +1,4 @@
 package Model;/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 
 /**
  * @author Ali
@@ -17,7 +14,7 @@ public class Customer implements User {
     protected Boolean isThreePhase; //true for 3-phase, false for 1-phase
     protected float regularUnitsConsumed;
     protected float peakUnitsConsumed;
-    private String connectionDate;
+    private final String connectionDate;
 
     public Customer(String customerID, String CNIC, String customerName, String address, String phone, Boolean isCommercial, Boolean isThreePhase, String connectionDate) {
         this.customerID = customerID;
@@ -38,9 +35,13 @@ public class Customer implements User {
         this.peakUnitsConsumed = peakUnitsConsumed;
     }
 
-    public Customer(String username, String password) {
-        this.customerID = username;
-        this.CNIC = password;
+    public static User getMatchingCustomer(String username, String password) {
+        for(Customer c: MasterPersistence.getInstance().getCustomers()) {
+            if(c.getCustomerID().equals(username) && c.getPassword().equals(password)) {
+                return c;
+            }
+        }
+        return null;
     }
 
     public String getCustomerID() {
@@ -113,7 +114,11 @@ public class Customer implements User {
 
     @Override
     public String toString() {
-        return this.getCustomerID() + " " + this.getCNIC() + " " + this.getCustomerName() + " " + this.getAddress() + " " + this.getPhone() + " " + ((this.getIsCommercial()) ? "Commercial" : "Domestic") + " " + ((this.getThreePhase()) ? "3-phase" : "1-phase") + " " + this.getConnectionDate() + " " + this.getRegularUnitsConsumed() + " " + this.getPeakUnitsConsumed();
+        try {
+            return this.getCustomerID() + " " + this.getCNIC() + " " + this.getCustomerName() + " " + this.getAddress() + " " + this.getPhone() + " " + ((this.getIsCommercial()) ? "Commercial" : "Domestic") + " " + ((this.getThreePhase()) ? "3-phase" : "1-phase") + " " + this.getConnectionDate() + " " + this.getRegularUnitsConsumed() + " " + this.getPeakUnitsConsumed();
+        } catch (Exception e) {
+            return "NULL";
+        }
     }
 
     public String toFileString() {

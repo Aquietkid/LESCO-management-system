@@ -6,7 +6,7 @@ import java.util.List;
 
 public class CustomerPersistence {
 
-    public final static String FILENAME = "SCD_A1/src/Model/CustomersData.txt";
+    public final static String FILENAME = "Model/CustomersData.txt";
 
     public static ArrayList<Customer> readFromFile() {
         ArrayList<Customer> customers = new ArrayList<>();

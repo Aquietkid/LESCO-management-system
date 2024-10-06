@@ -3,10 +3,12 @@ package View;
 import Controller.CustomerMenu;
 import Controller.EmployeeMenu;
 import Controller.LoginMenu;
+import Model.*;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class LoginScreen {
     private final JFrame frame1;
@@ -37,7 +39,7 @@ public class LoginScreen {
 
     private void initFrame1() {
         frame1.setTitle("Login to LESCO");
-        ImageIcon logo = new ImageIcon("SCD_A1/src/Assets/lesco-pk-logo.png");
+        ImageIcon logo = new ImageIcon("Assets/lesco-pk-logo.png");
         frame1.setIconImage(logo.getImage());
         frame1.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame1.setBounds(560, 190, 800, 600);
@@ -78,18 +80,30 @@ public class LoginScreen {
         loginButton.setText("Login");
         loginButton.addActionListener(e -> {
             String username = usernameTextField.getText();
-            char[] password = passwordTextField.getPassword();
+            String password = String.valueOf(passwordTextField.getPassword());
             Controller.UserWrapper myUser = new Controller.UserWrapper();
-            int loginStatus = myUser.getLoginStatus(username, String.valueOf(password));
+            int loginStatus = myUser.getLoginStatus(username, password);
+
             if (loginStatus == LoginMenu.CUSTOMER_ID) {
+
                 CustomerMenu customerMenu = new CustomerMenu(myUser.getMyUser());
+                customerMenu.runMenuGUI();
+
             } else if (loginStatus == LoginMenu.EMPLOYEE_ID) {
                 EmployeeMenu employeeMenu = new EmployeeMenu(myUser.getMyUser());
             } else {
                 JOptionPane.showMessageDialog(frame1, "Invalid login credentials! Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
-                usernameTextField.setText("");
                 passwordTextField.setText("");
             }
+
+
         });
+    }
+
+    private void loadData(ArrayList<TariffTax> tariffs, ArrayList<Customer> customers, ArrayList<NADRARecord> nadraRecords, ArrayList<BillingRecord> billingRecords) {
+        tariffs = TariffTaxPersistence.readFromFile();
+        customers = CustomerPersistence.readFromFile();
+        nadraRecords = NADRADBPersistence.readFromFile();
+        billingRecords = BillingRecordPersistence.readFromFile();
     }
 }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class BillingRecordPersistence {
 
-    private static final String FILENAME = "SCD_A1/src/Model/BillingInfo.txt";
+    private static final String FILENAME = "Model/BillingInfo.txt";
 
     /**
      * Writes a list of billing records to file
