@@ -3,12 +3,10 @@ package View;
 import Controller.CustomerMenu;
 import Controller.EmployeeMenu;
 import Controller.LoginMenu;
-import Model.*;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class LoginScreen {
     private final JFrame frame1;
@@ -25,10 +23,10 @@ public class LoginScreen {
         loginButton = new JButton();
         usernameLabel = new JLabel();
         passwordLabel = new JLabel();
-        init();
+        createUIComponents();
     }
 
-    private void init() {
+    private void createUIComponents() {
         initUsernameTextField();
         initPasswordTextField();
         initLoginButton();
@@ -87,6 +85,7 @@ public class LoginScreen {
             if (loginStatus == LoginMenu.CUSTOMER_ID) {
 
                 CustomerMenu customerMenu = new CustomerMenu(myUser.getMyUser());
+                frame1.dispose();
                 customerMenu.runMenuGUI();
 
             } else if (loginStatus == LoginMenu.EMPLOYEE_ID) {
@@ -100,10 +99,4 @@ public class LoginScreen {
         });
     }
 
-    private void loadData(ArrayList<TariffTax> tariffs, ArrayList<Customer> customers, ArrayList<NADRARecord> nadraRecords, ArrayList<BillingRecord> billingRecords) {
-        tariffs = TariffTaxPersistence.readFromFile();
-        customers = CustomerPersistence.readFromFile();
-        nadraRecords = NADRADBPersistence.readFromFile();
-        billingRecords = BillingRecordPersistence.readFromFile();
-    }
 }

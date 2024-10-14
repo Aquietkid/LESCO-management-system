@@ -1,10 +1,10 @@
+import View.CustomerMenu;
 import View.LoginScreen;
 
 public class Main {
 
     public static void main(String[] args) {
         new LoginScreen();
-
 
 //        while (true) {
 //            int loginStatus = myUser.getLoginStatus();

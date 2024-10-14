@@ -5,11 +5,6 @@ import java.awt.*;
 
 public class CustomerMenu extends JFrame {
     private final Controller.CustomerMenu customerMenu;
-    private JButton viewBillsButton;
-    private JButton estimateUpcomingBillButton;
-    private JButton updateCNICExpiryButton;
-    private JButton exitButton;
-    private JPanel customerMenuPanel;
 
     public CustomerMenu(Controller.CustomerMenu customerMenu) {
         this.customerMenu = customerMenu;
@@ -22,19 +17,19 @@ public class CustomerMenu extends JFrame {
     public static int EXIT = 4;
 
     private void createUIComponents() {
-        viewBillsButton = new JButton("View Bills");
+        JButton viewBillsButton = new JButton("View Bills");
         viewBillsButton.addActionListener(e -> customerMenu.executeMenuTask(VIEW_BILL, this));
 
-        estimateUpcomingBillButton = new JButton("Estimate Upcoming Bill");
+        JButton estimateUpcomingBillButton = new JButton("Estimate Upcoming Bill");
         estimateUpcomingBillButton.addActionListener(e -> customerMenu.executeMenuTask(ESTIMATE_UPCOMING_BILL, this));
 
-        updateCNICExpiryButton = new JButton("Update CNIC Expiry");
+        JButton updateCNICExpiryButton = new JButton("Update CNIC Expiry");
         updateCNICExpiryButton.addActionListener(e -> customerMenu.executeMenuTask(UPDATE_CNIC_EXPIRY, this));
 
-        exitButton = new JButton("Exit");
+        JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(e -> customerMenu.executeMenuTask(EXIT, this));
 
-        customerMenuPanel = new JPanel();
+        JPanel customerMenuPanel = new JPanel();
         customerMenuPanel.setLayout(new GridLayout(4, 0, 20, 20));
         customerMenuPanel.add(viewBillsButton);
         customerMenuPanel.add(estimateUpcomingBillButton);
@@ -47,6 +42,7 @@ public class CustomerMenu extends JFrame {
         setIconImage(logo.getImage());
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(560, 190, 800, 600);
+        setTitle("Customer Menu");
         setVisible(true);
         setMinimumSize(new Dimension(400, 300));
         setVisible(true);
