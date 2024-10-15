@@ -25,12 +25,22 @@ public class MasterPersistence {
         return instance;
     }
 
+
     private MasterPersistence() {
         customers = CustomerPersistence.readFromFile();
         employees = EmployeePersistence.readFromFile();
         billingRecords = BillingRecordPersistence.readFromFile();
         nadraRecords = NADRADBPersistence.readFromFile();
         tariffTaxes = TariffTaxPersistence.readFromFile();
+    }
+
+    public void writeToFiles() {
+        CustomerPersistence.writeToFile(customers);
+        EmployeePersistence.writeToFile(employees);
+        BillingRecordPersistence.writeToFile(billingRecords);
+        NADRADBPersistence.writeToFile(nadraRecords);
+        TariffTaxPersistence.writeToFile(tariffTaxes);
+        System.out.println("All files written successfully!");
     }
 
     public ArrayList<Customer> getCustomers() {

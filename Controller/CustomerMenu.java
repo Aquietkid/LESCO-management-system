@@ -1,7 +1,9 @@
 package Controller;
 
 import Model.*;
+import View.BillEstimator;
 import View.BillViewer;
+import View.CNICUpdateScreen;
 
 import javax.swing.*;
 import java.time.LocalDate;
@@ -48,21 +50,24 @@ public class CustomerMenu extends Menu {
 
     public void executeMenuTask(int choice, JFrame customerMenu) { //FOR GUI
         switch (choice) {
-            case 1:
-                // TODO: create GUI version
+            case View.CustomerMenu.VIEW_BILL:
                 viewBills(MasterPersistence.getInstance().getBillingRecords(), customerMenu);
                 break;
-            case 2:
-                // TODO: create GUI version
-                estimateUpcomingBills(MasterPersistence.getInstance().getTariffTaxes());
+            case View.CustomerMenu.ESTIMATE_UPCOMING_BILL:
+                estimateUpcomingBills(MasterPersistence.getInstance().getTariffTaxes(), customerMenu);
                 break;
-            case 3:
+            case View.CustomerMenu.UPDATE_CNIC_EXPIRY:
                 // TODO: create GUI version
-                updateCNICExpiry(MasterPersistence.getInstance().getNadraRecords());
+                updateCNICExpiry(MasterPersistence.getInstance().getNadraRecords(), customerMenu);
                 break;
             default:
                 JOptionPane.showMessageDialog(customerMenu, "Invalid choice!", "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void updateCNICExpiry(ArrayList<NADRARecord> nadraRecords, JFrame customerMenu) {
+        CNICUpdateScreen cnicUpdateScreen = new CNICUpdateScreen(nadraRecords, myCustomer);
+
     }
 
     private void viewBills(ArrayList<BillingRecord> billingRecords, JFrame customerMenu) {
@@ -78,36 +83,9 @@ public class CustomerMenu extends Menu {
     }
 
     public void estimateUpcomingBills(ArrayList<TariffTax> tariffTaxes, JFrame customerMenu) {
-        float currentRegularUnits = 0.0f;
-        float currentPeakUnits = 0.0f;
-
         TariffTax myTariffTax = TariffTax.getTariffTax(tariffTaxes, myCustomer);
-
-        if (myTariffTax.getPeakHourUnitPrice() != null) {
-            while (true) {
-                try {
-
-                    System.out.println("Enter the current peak hour units reading: ");
-//                    currentPeakUnits = input.nextFloat();
-                    if (currentPeakUnits > 0.0f) {
-                        break;
-                    } else if (currentPeakUnits < myCustomer.getPeakUnitsConsumed()) {
-                        System.out.println("Current peak hour reading cannot be less than previous peak hour reading!");
-                    } else System.out.println("Incorrect reading! Please enter again: ");
-                } catch (NumberFormatException e) {
-                    System.out.println("Value must be a number! ");
-                }
-            }
-        }
-
-        float costOfElectricity = (float) (currentRegularUnits * myTariffTax.getRegularUnitPrice()) + (float) ((myTariffTax.getPeakHourUnitPrice() != null) ? (currentPeakUnits * myTariffTax.getPeakHourUnitPrice()) : 0.0);
-        System.out.println("Cost of electricity = " + costOfElectricity);
-        float salesTaxAmount = (float) (costOfElectricity * (myTariffTax.getTaxPercentage() / 100));
-        System.out.println("Sales tax amount  = " + salesTaxAmount);
-        float fixedCharges = (float) myTariffTax.getFixedCharges();
-        System.out.println("Fixed charges = " + fixedCharges);
-        float totalBillingAmount = costOfElectricity + salesTaxAmount + fixedCharges;
-        System.out.println("Total Billing Amount: " + totalBillingAmount);
+        boolean isPeak = myTariffTax.getPeakHourUnitPrice() != null;
+        new BillEstimator(myCustomer.getRegularUnitsConsumed(), myCustomer.getPeakUnitsConsumed(), isPeak, myTariffTax);
     }
 
     // TODO: remove upon successful refactoring of new method

@@ -36,6 +36,16 @@ public class EmployeePersistence {
         }
     }
 
+    public static void writeToFile(ArrayList<Employee> employees) {
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME))) {
+            for (Employee e : employees) {
+                bw.write(e.toFileString());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static ArrayList<Employee> readFromFile() {
         ArrayList<Employee> employees = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(EmployeePersistence.FILENAME))) {

@@ -1,3 +1,4 @@
+import Model.MasterPersistence;
 import View.CustomerMenu;
 import View.LoginScreen;
 
@@ -38,7 +39,7 @@ public class Main {
 //                if (choice == 'n' || choice == 'N') {
 //                    input.close();
 
-        // TODO: Write all data to files at program termination
+        MasterPersistence.getInstance().writeToFiles();
 
 //                    TariffTaxPersistence.writeToFile(tariffs);
 //                    CustomerPersistence.writeToFile(customers);

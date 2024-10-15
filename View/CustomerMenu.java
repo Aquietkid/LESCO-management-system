@@ -11,10 +11,10 @@ public class CustomerMenu extends JFrame {
         createUIComponents();
     }
 
-    public static int VIEW_BILL = 1;
-    public static int ESTIMATE_UPCOMING_BILL = 2;
-    public static int UPDATE_CNIC_EXPIRY = 3;
-    public static int EXIT = 4;
+    public static final int VIEW_BILL = 1;
+    public static final int ESTIMATE_UPCOMING_BILL = 2;
+    public static final int UPDATE_CNIC_EXPIRY = 3;
+    public static final int EXIT = 4;
 
     private void createUIComponents() {
         JButton viewBillsButton = new JButton("View Bills");
