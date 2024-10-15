@@ -1,7 +1,6 @@
 package View;
 
 import Controller.CustomerMenu;
-import Controller.EmployeeMenu;
 import Controller.LoginMenu;
 
 import javax.swing.*;
@@ -89,7 +88,8 @@ public class LoginScreen {
                 customerMenu.runMenuGUI();
 
             } else if (loginStatus == LoginMenu.EMPLOYEE_ID) {
-                EmployeeMenu employeeMenu = new EmployeeMenu(myUser.getMyUser());
+                EmployeeMenuScreen employeeMenuScreen = new EmployeeMenuScreen(myUser.getMyUser());
+                frame1.dispose();
             } else {
                 JOptionPane.showMessageDialog(frame1, "Invalid login credentials! Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
                 passwordTextField.setText("");

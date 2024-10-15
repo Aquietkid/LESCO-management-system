@@ -27,7 +27,7 @@ public class CustomerMenu extends JFrame {
         updateCNICExpiryButton.addActionListener(e -> customerMenu.executeMenuTask(UPDATE_CNIC_EXPIRY, this));
 
         JButton exitButton = new JButton("Exit");
-        exitButton.addActionListener(e -> customerMenu.executeMenuTask(EXIT, this));
+        exitButton.addActionListener(e -> dispose());
 
         JPanel customerMenuPanel = new JPanel();
         customerMenuPanel.setLayout(new GridLayout(4, 0, 20, 20));
@@ -43,7 +43,6 @@ public class CustomerMenu extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(560, 190, 800, 600);
         setTitle("Customer Menu");
-        setVisible(true);
         setMinimumSize(new Dimension(400, 300));
         setVisible(true);
     }

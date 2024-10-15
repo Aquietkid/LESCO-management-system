@@ -60,6 +60,8 @@ public class CustomerMenu extends Menu {
                 // TODO: create GUI version
                 updateCNICExpiry(MasterPersistence.getInstance().getNadraRecords(), customerMenu);
                 break;
+            case View.CustomerMenu.EXIT:
+                customerMenu.dispose();
             default:
                 JOptionPane.showMessageDialog(customerMenu, "Invalid choice!", "Error", JOptionPane.ERROR_MESSAGE);
         }
