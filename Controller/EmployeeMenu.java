@@ -1,7 +1,6 @@
 package Controller;
 
 import Model.*;
-import View.EmployeeMenuScreen;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -13,6 +12,13 @@ import java.util.Scanner;
 public class EmployeeMenu extends Menu {
 
     private final User myEmployee;
+
+    public static final int USERNAME_MISMATCH = -1;
+    public static final int PASSWORD_MISMATCH = -2;
+    public static final int CONFIRM_PASSWORD_MISMATCH = -3;
+    public static final int OLD_NEW_PASSWORDS_SAME = -4;
+    public static final int PASSWORD_TOO_SHORT = -5;
+
 
     public EmployeeMenu(User employee) {
         this.message = """
@@ -562,6 +568,22 @@ public class EmployeeMenu extends Menu {
         return LocalDate.of(year, month, day);
     }
 
+    public int changePassword(String password, String newPassword, String confirmPassword) {
+        if (!password.equals(myEmployee.getPassword())) {
+            return EmployeeMenu.PASSWORD_MISMATCH;
+        } else if (newPassword.equals(myEmployee.getPassword())) {
+            return EmployeeMenu.OLD_NEW_PASSWORDS_SAME;
+        } else if (newPassword.length() < 6) {
+            return EmployeeMenu.PASSWORD_TOO_SHORT;
+        } else if (!confirmPassword.equals(newPassword)) {
+            return EmployeeMenu.CONFIRM_PASSWORD_MISMATCH;
+        }
+        EmployeePersistence.writeToFile(myEmployee.getUsername(), newPassword);
+        return 0;
+    }
+
+
+    // TODO: Remove after successful conversion
     public void changePassword() {
         Scanner input = new Scanner(System.in);
         String checkUsername;

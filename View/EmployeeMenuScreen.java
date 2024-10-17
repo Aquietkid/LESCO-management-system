@@ -1,8 +1,5 @@
 package View;
 
-import Controller.EmployeeMenu;
-import Controller.UserWrapper;
-import Model.Employee;
 import Model.User;
 
 import javax.swing.*;
@@ -20,7 +17,7 @@ public class EmployeeMenuScreen extends JFrame {
 
     public EmployeeMenuScreen(User employee) {
         init();
-        this.employeeMenu = new EmployeeMenu(employee);
+        this.employeeMenu = new Controller.EmployeeMenu(employee);
     }
 
     private void init() {
@@ -38,6 +35,10 @@ public class EmployeeMenuScreen extends JFrame {
         tariffsAndTaxesButton.addActionListener(e -> {});
         changePasswordButton.addActionListener(e -> {});
         exitButton.addActionListener(e -> this.dispose());
+
+        changePasswordButton.addActionListener(e -> {
+            new PasswordChangeScreen(employeeMenu);
+        });
 
 
         panelMenu.add(customersButton);
