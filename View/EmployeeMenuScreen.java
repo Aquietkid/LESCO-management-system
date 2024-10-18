@@ -1,19 +1,16 @@
 package View;
 
+import Model.MasterPersistence;
 import Model.User;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 public class EmployeeMenuScreen extends JFrame {
-    private JButton customersButton;
-    private JButton billsButton;
-    private JButton tariffsAndTaxesButton;
-    private JButton changePasswordButton;
-    private JButton exitButton;
-    private JPanel panelMenu;
-    private Controller.EmployeeMenu employeeMenu;
+    private final Controller.EmployeeMenu employeeMenu;
 
     public EmployeeMenuScreen(User employee) {
         init();
@@ -21,25 +18,25 @@ public class EmployeeMenuScreen extends JFrame {
     }
 
     private void init() {
-        panelMenu = new JPanel();
+        JPanel panelMenu = new JPanel();
         panelMenu.setLayout(new GridLayout(3, 3, 20, 20));
 
-        customersButton = new JButton("Customers");
-        billsButton = new JButton("Bills");
-        tariffsAndTaxesButton = new JButton("Tariffs and Taxes");
-        changePasswordButton = new JButton("Change Password");
-        exitButton = new JButton("Exit");
+        JButton customersButton = new JButton("Customers");
+        JButton billsButton = new JButton("Bills");
+        JButton tariffsAndTaxesButton = new JButton("Tariffs and Taxes");
+        JButton changePasswordButton = new JButton("Change Password");
+        JButton exitButton = new JButton("Exit");
 
-        customersButton.addActionListener(e -> {});
-        billsButton.addActionListener(e -> {});
-        tariffsAndTaxesButton.addActionListener(e -> {});
-        changePasswordButton.addActionListener(e -> {});
-        exitButton.addActionListener(e -> this.dispose());
-
-        changePasswordButton.addActionListener(e -> {
-            new PasswordChangeScreen(employeeMenu);
+        customersButton.addActionListener(e -> {
+        });
+        billsButton.addActionListener(e -> {
+        });
+        tariffsAndTaxesButton.addActionListener(e -> {
         });
 
+        changePasswordButton.addActionListener(e -> new PasswordChangeScreen(employeeMenu));
+
+        exitButton.addActionListener(e -> this.dispose());
 
         panelMenu.add(customersButton);
         panelMenu.add(billsButton);
@@ -50,7 +47,7 @@ public class EmployeeMenuScreen extends JFrame {
         panelMenu.setBorder(new EmptyBorder(10, 10, 10, 10));
         ImageIcon logo = new ImageIcon("Assets/lesco-pk-logo.png");
         setIconImage(logo.getImage());
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//        setDefaultCloseOperation();
         setBounds(560, 190, 800, 600);
         setTitle("Customer Menu");
         setVisible(true);
@@ -59,6 +56,42 @@ public class EmployeeMenuScreen extends JFrame {
         add(panelMenu);
 
         setTitle("Employee Menu");
+        addWindowListener(new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                MasterPersistence.getInstance().writeToFiles();
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+                MasterPersistence.getInstance().writeToFiles();
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+
+            }
+        });
         setVisible(true);
     }
 

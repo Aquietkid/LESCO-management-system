@@ -13,7 +13,6 @@ public class EmployeeMenu extends Menu {
 
     private final User myEmployee;
 
-    public static final int USERNAME_MISMATCH = -1;
     public static final int PASSWORD_MISMATCH = -2;
     public static final int CONFIRM_PASSWORD_MISMATCH = -3;
     public static final int OLD_NEW_PASSWORDS_SAME = -4;
@@ -578,7 +577,20 @@ public class EmployeeMenu extends Menu {
         } else if (!confirmPassword.equals(newPassword)) {
             return EmployeeMenu.CONFIRM_PASSWORD_MISMATCH;
         }
-        EmployeePersistence.writeToFile(myEmployee.getUsername(), newPassword);
+        ArrayList<Employee> employees = MasterPersistence.getInstance().getEmployees();
+        for(Employee employee : employees) {
+            if(employee.getUsername().equals(myEmployee.getUsername())) {
+                ((Employee) myEmployee).setPassword(newPassword);
+                employees.remove(employee);
+                employees.add((Employee) myEmployee);
+                System.out.println(myEmployee.toFileString());
+                MasterPersistence.getInstance().setEmployeesUpdated();
+                break;
+            }
+        }
+        for(Employee employee : employees) {
+            System.out.println(employee.toFileString());
+        }
         return 0;
     }
 
@@ -626,7 +638,7 @@ public class EmployeeMenu extends Menu {
             if (newPasswordRepeat.equals(newPassword)) break;
             else System.out.print("Passwords do not match! Enter again: ");
         }
-        EmployeePersistence.writeToFile(checkUsername, newPassword);
+//        EmployeePersistence.writeToFile(checkUsername, newPassword);
 
         //Display confirmation message
         System.out.println("Password updated successfully!");

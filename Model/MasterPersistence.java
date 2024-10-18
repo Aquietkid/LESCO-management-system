@@ -9,12 +9,17 @@ import java.util.ArrayList;
  * The data can be accessed using methods.
  */
 public class MasterPersistence {
-
     private ArrayList<Customer> customers;
     private ArrayList<Employee> employees;
     private ArrayList<BillingRecord> billingRecords;
     private ArrayList<NADRARecord> nadraRecords;
     private ArrayList<TariffTax> tariffTaxes;
+
+    boolean customersUpdated = false;
+    boolean employeesUpdated = false;
+    boolean billingRecordsUpdated = false;
+    boolean nadraRecordsUpdated = false;
+    boolean tariffTaxesUpdated = false;
 
     private static MasterPersistence instance;
 
@@ -35,11 +40,12 @@ public class MasterPersistence {
     }
 
     public void writeToFiles() {
-        CustomerPersistence.writeToFile(customers);
-        EmployeePersistence.writeToFile(employees);
-        BillingRecordPersistence.writeToFile(billingRecords);
-        NADRADBPersistence.writeToFile(nadraRecords);
-        TariffTaxPersistence.writeToFile(tariffTaxes);
+        if (customersUpdated) CustomerPersistence.writeToFile(customers);
+        if (employeesUpdated) EmployeePersistence.writeToFile(employees);
+        if (billingRecordsUpdated) BillingRecordPersistence.writeToFile(billingRecords);
+        if (nadraRecordsUpdated) NADRADBPersistence.writeToFile(nadraRecords);
+        if (tariffTaxesUpdated) TariffTaxPersistence.writeToFile(tariffTaxes);
+
         System.out.println("All files written successfully!");
     }
 
@@ -61,5 +67,25 @@ public class MasterPersistence {
 
     public ArrayList<TariffTax> getTariffTaxes() {
         return tariffTaxes;
+    }
+
+    public void setCustomersUpdated() {
+        this.customersUpdated = true;
+    }
+
+    public void setEmployeesUpdated() {
+        this.employeesUpdated = true;
+    }
+
+    public void setBillingRecordsUpdated() {
+        this.billingRecordsUpdated = true;
+    }
+
+    public void setNadraRecordsUpdated() {
+        this.nadraRecordsUpdated = true;
+    }
+
+    public void setTariffTaxesUpdated() {
+        this.tariffTaxesUpdated = true;
     }
 }

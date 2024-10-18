@@ -7,17 +7,17 @@ public class EmployeePersistence {
 
     public static final String FILENAME = "Model/EmployeesData.txt";
 
-    public static void writeToFile(String _username, String _password) {
-        ArrayList<Employee> employees = MasterPersistence.getInstance().getEmployees();
-
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME))) {
-            for (Employee e : employees) {
-                bw.write(e.toFileString());
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
+//    public static void writeToFile(String _username, String _password) {
+//        ArrayList<Employee> employees = MasterPersistence.getInstance().getEmployees();
+//
+//        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME))) {
+//            for (Employee e : employees) {
+//                bw.write(e.toFileString());
+//            }
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        }
+//    }
 
     public static void writeToFile(ArrayList<Employee> employees) {
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME))) {

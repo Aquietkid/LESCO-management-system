@@ -2,7 +2,7 @@ package Model;
 
 public class Employee implements User {
     private final String username;
-    private final String password;
+    private String password;
 
     public Employee(String username, String password) {
         this.username = username;
@@ -15,6 +15,10 @@ public class Employee implements User {
 
     public String getPassword() {
         return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

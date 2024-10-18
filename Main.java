@@ -1,5 +1,4 @@
 import Model.MasterPersistence;
-import View.CustomerMenu;
 import View.LoginScreen;
 
 public class Main {
@@ -39,6 +38,7 @@ public class Main {
 //                if (choice == 'n' || choice == 'N') {
 //                    input.close();
 
+        // TODO: This writes to the files immediately after creating the LoginScreen. Fix this so that all files are written just before program termination
         MasterPersistence.getInstance().writeToFiles();
 
 //                    TariffTaxPersistence.writeToFile(tariffs);
