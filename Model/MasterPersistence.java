@@ -45,8 +45,16 @@ public class MasterPersistence {
         if (billingRecordsUpdated) BillingRecordPersistence.writeToFile(billingRecords);
         if (nadraRecordsUpdated) NADRADBPersistence.writeToFile(nadraRecords);
         if (tariffTaxesUpdated) TariffTaxPersistence.writeToFile(tariffTaxes);
-
+        setAllFlagsFalse();
         System.out.println("All files written successfully!");
+    }
+
+    private void setAllFlagsFalse() {
+        this.customersUpdated = false;
+        this.employeesUpdated = false;
+        this.billingRecordsUpdated = false;
+        this.nadraRecordsUpdated = false;
+        this.tariffTaxesUpdated = false;
     }
 
     public ArrayList<Customer> getCustomers() {
