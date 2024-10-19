@@ -39,7 +39,7 @@ public class Main {
 //                    input.close();
 
         // TODO: This writes to the files immediately after creating the LoginScreen. Fix this so that all files are written just before program termination
-        MasterPersistence.getInstance().writeToFiles();
+//        MasterPersistence.getInstance().writeToFiles();
 
 //                    TariffTaxPersistence.writeToFile(tariffs);
 //                    CustomerPersistence.writeToFile(customers);

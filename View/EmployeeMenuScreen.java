@@ -28,6 +28,7 @@ public class EmployeeMenuScreen extends JFrame {
         JButton exitButton = new JButton("Exit");
 
         customersButton.addActionListener(e -> {
+            new CustomersView();
         });
         billsButton.addActionListener(e -> {
         });
@@ -47,7 +48,6 @@ public class EmployeeMenuScreen extends JFrame {
         panelMenu.setBorder(new EmptyBorder(10, 10, 10, 10));
         ImageIcon logo = new ImageIcon("Assets/lesco-pk-logo.png");
         setIconImage(logo.getImage());
-//        setDefaultCloseOperation();
         setBounds(560, 190, 800, 600);
         setTitle("Customer Menu");
         setVisible(true);
