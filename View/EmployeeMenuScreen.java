@@ -25,14 +25,22 @@ public class EmployeeMenuScreen extends JFrame {
         JButton billsButton = new JButton("Bills");
         JButton tariffsAndTaxesButton = new JButton("Tariffs and Taxes");
         JButton changePasswordButton = new JButton("Change Password");
+        JButton NADRAButton = new JButton("NADRA Records");
         JButton exitButton = new JButton("Exit");
 
         customersButton.addActionListener(e -> {
             new CustomersView();
         });
+
         billsButton.addActionListener(e -> {
+            new BillsView();
         });
         tariffsAndTaxesButton.addActionListener(e -> {
+            new TariffTaxView();
+        });
+
+        NADRAButton.addActionListener(e -> {
+            new NADRARecordView();
         });
 
         changePasswordButton.addActionListener(e -> new PasswordChangeScreen(employeeMenu));
@@ -43,6 +51,7 @@ public class EmployeeMenuScreen extends JFrame {
         panelMenu.add(billsButton);
         panelMenu.add(tariffsAndTaxesButton);
         panelMenu.add(changePasswordButton);
+        panelMenu.add(NADRAButton);
         panelMenu.add(exitButton);
 
         panelMenu.setBorder(new EmptyBorder(10, 10, 10, 10));

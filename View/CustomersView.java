@@ -106,9 +106,7 @@ public class CustomersView extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         ImageIcon logo = new ImageIcon("Assets/lesco-pk-logo.png");
         setIconImage(logo.getImage());
-
         setVisible(true);
-
 
     }
 

@@ -19,6 +19,8 @@ public class NADRARecord {
         return expiryDate;
     }
 
+    public String getIssuanceDate() { return issuanceDate; }
+
     public void setExpiryDate(String expiryDate) {
         this.expiryDate = expiryDate;
     }

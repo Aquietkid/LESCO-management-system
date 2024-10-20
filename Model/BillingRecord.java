@@ -81,6 +81,30 @@ public class BillingRecord {
         return billPaidStatus;
     }
 
+    public String getReadingEntryDate() {
+        return readingEntryDate;
+    }
+
+    public float getCostOfElectricity() {
+        return costOfElectricity;
+    }
+
+    public float getSalesTaxAmount() {
+        return salesTaxAmount;
+    }
+
+    public float getFixedCharges() {
+        return fixedCharges;
+    }
+
+    public boolean isBillPaidStatus() {
+        return billPaidStatus;
+    }
+
+    public String getBillPaymentDate() {
+        return billPaymentDate;
+    }
+
     public void setBillPaidStatus(boolean billPaidStatus) {
         this.billPaidStatus = billPaidStatus;
     }
@@ -88,4 +112,6 @@ public class BillingRecord {
     public void setBillPaymentDate(String billPaymentDate) {
         this.billPaymentDate = billPaymentDate;
     }
+
+
 }

@@ -66,21 +66,27 @@ public class AddCustomerScreen extends JFrame {
 
             if (txtAddress.getText().isEmpty()) {
                 showError("Address cannot be empty!");
+                return;
             }
             if (txtAddress.getText().contains(",")) {
                 showError("Commas are not allowed in the address!");
+                return;
             }
             if (txtCNIC.getText().isEmpty() || txtCNIC.getText().length() != 13) {
                 showError("CNIC must be 13 digits long!");
+                return;
             }
             if (txtCNIC.getText().contains(",")) {
                 showError("Commas are not allowed in the CNIC!");
+                return;
             }
             if (txtCustomerName.getText().isEmpty()) {
                 showError("Customer Name cannot be empty!");
+                return;
             }
             if (txtPhone.getText().isEmpty() || txtPhone.getText().length() != 11) {
                 showError("Phone cannot be empty!");
+                return;
             }
 
             ArrayList<Customer> customers = MasterPersistence.getInstance().getCustomers();
@@ -125,7 +131,8 @@ public class AddCustomerScreen extends JFrame {
 
         btnCancel.addActionListener(e -> dispose());
 
-        add(panel);
+        setLayout(new BorderLayout());
+        add(panel, BorderLayout.CENTER);
 
         setVisible(true);
     }

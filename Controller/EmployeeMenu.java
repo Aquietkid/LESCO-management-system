@@ -18,175 +18,104 @@ public class EmployeeMenu extends Menu {
     public static final int OLD_NEW_PASSWORDS_SAME = -4;
     public static final int PASSWORD_TOO_SHORT = -5;
 
+    public static final int INVALID_CUSTOMER_ID = 101;
+    public static final int INVALID_CUSTOMER_ID_FORMAT = 102;
+    private static final int MONTH_BILL_EXISTS = 103;
+    private static final int LATEST_BILL_EXISTS = 104;
+    private static final int BILLING_MONTH_IN_FUTURE = 105;
+    private static final int INVALID_READING = 106;
+    private static final int INVALID_DATE = 107;
+
 
     public EmployeeMenu(User employee) {
-        this.message = """
-                Employee Menu
-                1. Create Models.Bill
-                2. Modify Bills
-                3. Add New Models.Customer
-                4. Update a Models.Customer
-                5. Record Models.Bill Payment
-                6. Update Tariffs and Taxes
-                7. View Models.Customer Bills
-                8. View Models.Bill Reports
-                9. View Customers with CNICs Expiring Soon
-                10. View All Customers
-                11. Change Password
-                12. Exit
-                """;
         this.myEmployee = employee;
     }
 
-    public static void addBillingRecord(ArrayList<BillingRecord> billingRecords, ArrayList<Customer> customers, ArrayList<TariffTax> tariffTaxes) {
-        Scanner scanner = new Scanner(System.in);
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d-M-yyyy");
-        String customerID, billingMonth, readingEntryDate, dueDate;
-        float currentMeterReadingRegular, currentMeterReadingPeak = 0.0f, costOfElectricity, salesTaxAmount, fixedCharges, totalBillingAmount;
-        LocalDate readingDate, today = LocalDate.now();
-
-        Customer myCustomer = null;
-        TariffTax myTariffTax;
-
-
-        while (true) {
-            System.out.print("Enter 4-digit Models.Customer ID: ");
-            customerID = scanner.nextLine().trim();
-            if (customerID.matches("\\d{4}")) {
-                for (Customer c : customers) {
-                    if (c.getCustomerID().equals(customerID)) {
-                        myCustomer = c;
-                        break;
-                    }
-                }
-                if (myCustomer != null) break;
-                else
-                    System.out.println("Models.Customer ID does not exist in the records. Please enter a valid customer ID!");
-            } else System.out.println("Invalid Models.Customer ID. It must be a 4-digit number.");
+    public static int addBillingRecord(String customerID, String billingMonth, float currentMeterReadingRegular, float currentMeterReadingPeak, String readingEntryDate, String dueDate) {
+        Customer myCustomer;
+        if ((myCustomer = isValidCustomerID(customerID)) != null) {
+            return INVALID_CUSTOMER_ID;
         }
 
-        myTariffTax = TariffTax.getTariffTax(tariffTaxes, myCustomer);
+        DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MM/yyyy");
+        LocalDate billingDate;
+        try {
+            billingDate = LocalDate.parse("01/" + billingMonth, DateTimeFormatter.ofPattern("dd/MM/yyyy")); // Using the first day of the month to validate
+        } catch (Exception e) {
+            System.out.println("Invalid billing month format. Please use MM/yyyy.");
+            return -2; // Error code for invalid billing month
+        }
 
-        while (true) {
-            System.out.print("Enter Billing Month (MM-YYYY): ");
-            billingMonth = scanner.nextLine().trim();
-            if (billingMonth.matches("\\d{2}-\\d{4}")) {
-                boolean billExists = false;
-                LocalDate latestBillDate = null;
+        if (currentMeterReadingRegular < 0 || currentMeterReadingPeak < 0) {
+            System.out.println("Meter readings must be positive numbers.");
+            return -3; // Error code for invalid meter readings
+        }
 
-                for (BillingRecord b : billingRecords) {
-                    if (b.getCustomerID().equals(myCustomer.getCustomerID())) {
-                        LocalDate billDate = LocalDate.parse("01-" + b.getBillingMonth(), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        // Validate reading entry date and due date
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate readingEntryLocalDate;
+        LocalDate dueLocalDate;
+        try {
+            readingEntryLocalDate = LocalDate.parse(readingEntryDate, dateFormatter);
+            dueLocalDate = LocalDate.parse(dueDate, dateFormatter);
+        } catch (Exception e) {
+            System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+            return -4; // Error code for invalid date format
+        }
 
-                        if (b.getBillingMonth().equals(billingMonth)) {
-                            billExists = true;
-                            break;
-                        }
+        if (dueLocalDate.isBefore(readingEntryLocalDate)) {
+            System.out.println("Due date cannot be before the reading entry date.");
+            return -5; // Error code for due date issue
+        }
 
-                        // Check for the latest bill date in the records
-                        if (latestBillDate == null || billDate.isAfter(latestBillDate)) {
-                            latestBillDate = billDate;
-                        }
-                    }
-                }
-                int enteredMonth = Integer.parseInt(billingMonth.substring(0, 2));
-                int enteredYear = Integer.parseInt(billingMonth.substring(3, 7));
-                int currentMonth = today.getMonthValue();
-                int currentYear = today.getYear();
+        // Assuming regular and peak rates are already predefined
+        float regularRate = 10.0f; // Example rate for regular usage
+        float peakRate = 15.0f;    // Example rate for peak usage
 
-                LocalDate enteredBillDate = LocalDate.of(enteredYear, enteredMonth, 1);
+        // Calculate cost of electricity
+        float costOfElectricity = (currentMeterReadingRegular * regularRate) + (currentMeterReadingPeak * peakRate);
 
-                if (billExists) {
-                    System.out.println("A bill for the entered month already exists.");
-                    if (enteredMonth == today.getMonthValue() && enteredYear == today.getYear()) {
-                        System.out.println("No new bill can be added! Returning...");
-                        return;
-                    }
+        // Calculate sales tax (e.g., 15% of electricity cost)
+        float salesTaxRate = 0.15f;
+        float salesTaxAmount = costOfElectricity * salesTaxRate;
 
-                } else if (enteredYear > currentYear || (enteredYear == currentYear && enteredMonth > currentMonth)) {
-                    System.out.println("Billing Month cannot be in the future.");
-                } else if (enteredMonth < 1 || enteredMonth > 12) {
-                    System.out.println("Invalid month. Please enter a valid month between 01 and 12.");
-                } else if (latestBillDate != null && enteredBillDate.isBefore(latestBillDate)) {
-                    System.out.println("A newer bill already exists. Please enter a valid billing month.");
-                } else {
-                    break;
-                }
-            } else {
-                System.out.println("Invalid format. Billing Month must be in MM-YYYY format.");
+        // Calculate fixed charges (assumed constant for simplicity)
+        float fixedCharges = 500.0f;  // Example fixed charge
+
+        // Total billing amount
+        float totalBillingAmount = costOfElectricity + salesTaxAmount + fixedCharges;
+
+        // Create a new billing record object
+        BillingRecord newRecord = new BillingRecord(
+                customerID,
+                billingMonth,
+                currentMeterReadingRegular,
+                currentMeterReadingPeak,
+                readingEntryDate,
+                costOfElectricity,
+                salesTaxAmount,
+                fixedCharges,
+                totalBillingAmount,
+                dueDate
+        );
+
+//        MasterPersistence.addBillingRecord(newRecord);
+
+        System.out.println("Billing record successfully added for customer ID: " + customerID);
+        return 0; // Success code
+    }
+
+    private static Customer isValidCustomerID(String customerID) {
+        if(customerID.trim().length() != 4) {
+            return null;
+        }
+        ArrayList<Customer> customers = MasterPersistence.getInstance().getCustomers();
+        for (Customer customer : customers) {
+            if (customer.getCustomerID().equals(customerID)) {
+                return customer;
             }
         }
-
-        while (true) {
-            try {
-                System.out.print("Enter Current Meter Reading Regular: ");
-                currentMeterReadingRegular = Float.parseFloat(scanner.nextLine().trim());
-                if (currentMeterReadingRegular >= 0) {
-                    if (currentMeterReadingRegular < myCustomer.getRegularUnitsConsumed()) {
-                        System.out.println("New reading can not be less than the previous reading! ");
-                    } else break;
-                }
-                System.out.println("Meter reading cannot be negative.");
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a valid number.");
-            }
-        }
-
-        if (myTariffTax.getPeakHourUnitPrice() != null) {
-            while (true) {
-                try {
-                    System.out.print("Enter Current Meter Reading Peak: ");
-                    currentMeterReadingPeak = Float.parseFloat(scanner.nextLine().trim());
-                    if (currentMeterReadingPeak >= 0) {
-                        if (currentMeterReadingPeak < myCustomer.getPeakUnitsConsumed()) {
-                            System.out.println("New reading can not be less than the previous reading! ");
-                        } else break;
-                    }
-                    System.out.println("Meter reading cannot be negative.");
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a valid number.");
-                }
-            }
-        } else {
-            System.out.println("No price is charged for peak hour units for this type of meter. ");
-        }
-
-        while (true) {
-            try {
-                System.out.print("Enter Reading Date (DD-MM-YYYY): ");
-                readingEntryDate = scanner.nextLine().trim();
-                readingDate = LocalDate.parse(readingEntryDate, dateFormatter);
-                if (!readingDate.isAfter(today)) {
-                    if (readingDate.isBefore(LocalDate.parse(myCustomer.getConnectionDate(), dateFormatter))) {
-                        System.out.println("Reading Entry Date cannot be before the connection date (" + myCustomer.getConnectionDate() + ").");
-                        continue;
-                    }
-                    break;
-                } else {
-                    System.out.println("Reading Entry Date cannot be in the future.");
-                }
-
-            } catch (DateTimeParseException e) {
-                System.out.println("Invalid date format. Please enter a valid date.");
-            }
-        }
-
-        costOfElectricity = (float) (((currentMeterReadingRegular - myCustomer.getRegularUnitsConsumed()) * myTariffTax.getRegularUnitPrice())
-                + ((myTariffTax.getPeakHourUnitPrice() != null) ? ((currentMeterReadingPeak - myCustomer.getPeakUnitsConsumed()) * myTariffTax.getPeakHourUnitPrice()) : 0.0));
-
-        salesTaxAmount = (float) (costOfElectricity * (myTariffTax.getTaxPercentage() / 100));
-
-        fixedCharges = (float) myTariffTax.getFixedCharges();
-
-        totalBillingAmount = costOfElectricity + salesTaxAmount + fixedCharges;
-        System.out.println("Total Billing Amount: " + totalBillingAmount);
-
-        dueDate = dateFormatter.format(today.plusDays(7));
-
-        BillingRecord newRecord = new BillingRecord(customerID, billingMonth, currentMeterReadingRegular, currentMeterReadingPeak, readingEntryDate, costOfElectricity, salesTaxAmount, fixedCharges, totalBillingAmount, dueDate);
-        billingRecords.add(newRecord);
-
-        System.out.println("Billing record added successfully.");
+        return null;
     }
 
     @Override
@@ -219,7 +148,7 @@ public class EmployeeMenu extends Menu {
     public void executeMenuTask(int choice, ArrayList<Customer> customers, ArrayList<TariffTax> tariffs, ArrayList<NADRARecord> NADRARecords, ArrayList<BillingRecord> billingRecords) {
         switch (choice) {
             case 1:
-                addBillingRecord(billingRecords, customers, tariffs);
+//                addBillingRecord(billingRecords, customers, tariffs);
                 break;
             case 2:
                 modifyBill();
@@ -291,8 +220,7 @@ public class EmployeeMenu extends Menu {
         Scanner input = new Scanner(System.in);
         String customerID = "1000"; //Initial minimum value
         for (Customer c : customers) {
-            if (Integer.parseInt(c.getCustomerID()) > Integer.parseInt(customerID))
-                customerID = c.getCustomerID();
+            if (Integer.parseInt(c.getCustomerID()) > Integer.parseInt(customerID)) customerID = c.getCustomerID();
         }
         customerID = String.valueOf(Integer.parseInt(customerID) + 1);
 
@@ -575,8 +503,8 @@ public class EmployeeMenu extends Menu {
             return EmployeeMenu.CONFIRM_PASSWORD_MISMATCH;
         }
         ArrayList<Employee> employees = MasterPersistence.getInstance().getEmployees();
-        for(Employee employee : employees) {
-            if(employee.getUsername().equals(myEmployee.getUsername())) {
+        for (Employee employee : employees) {
+            if (employee.getUsername().equals(myEmployee.getUsername())) {
                 ((Employee) myEmployee).setPassword(newPassword);
                 employees.remove(employee);
                 employees.add((Employee) myEmployee);
@@ -585,7 +513,7 @@ public class EmployeeMenu extends Menu {
                 break;
             }
         }
-        for(Employee employee : employees) {
+        for (Employee employee : employees) {
             System.out.println(employee.toFileString());
         }
         return 0;
