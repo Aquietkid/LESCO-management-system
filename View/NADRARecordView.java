@@ -11,7 +11,10 @@ import java.util.ArrayList;
 public class NADRARecordView extends JFrame {
     private DefaultTableModel tableModel;
 
-    public NADRARecordView() {
+    Controller.EmployeeMenu employeeMenu;
+
+    public NADRARecordView(Controller.EmployeeMenu employeeMenu) {
+        this.employeeMenu = employeeMenu;
         init();
     }
 
@@ -58,8 +61,14 @@ public class NADRARecordView extends JFrame {
 
         });
 
+        JButton btnCNICReports = new JButton("CNIC Reports");
+        btnCNICReports.addActionListener(e -> {
+            JOptionPane.showMessageDialog(this, employeeMenu.viewCNICCustomers());
+        });
+
         JScrollPane scrollPane = new JScrollPane(nadraTable);
         add(scrollPane, BorderLayout.CENTER);
+        add(btnCNICReports, BorderLayout.SOUTH);
         setVisible(true);
     }
 

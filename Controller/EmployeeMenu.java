@@ -1,7 +1,9 @@
 package Controller;
 
 import Model.*;
+import View.AddCustomerScreen;
 
+import javax.swing.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -85,18 +87,7 @@ public class EmployeeMenu extends Menu {
         float totalBillingAmount = costOfElectricity + salesTaxAmount + fixedCharges;
 
         // Create a new billing record object
-        BillingRecord newRecord = new BillingRecord(
-                customerID,
-                billingMonth,
-                currentMeterReadingRegular,
-                currentMeterReadingPeak,
-                readingEntryDate,
-                costOfElectricity,
-                salesTaxAmount,
-                fixedCharges,
-                totalBillingAmount,
-                dueDate
-        );
+        BillingRecord newRecord = new BillingRecord(customerID, billingMonth, currentMeterReadingRegular, currentMeterReadingPeak, readingEntryDate, costOfElectricity, salesTaxAmount, fixedCharges, totalBillingAmount, dueDate);
 
 //        MasterPersistence.addBillingRecord(newRecord);
 
@@ -105,7 +96,7 @@ public class EmployeeMenu extends Menu {
     }
 
     private static Customer isValidCustomerID(String customerID) {
-        if(customerID.trim().length() != 4) {
+        if (customerID.trim().length() != 4) {
             return null;
         }
         ArrayList<Customer> customers = MasterPersistence.getInstance().getCustomers();
@@ -186,7 +177,6 @@ public class EmployeeMenu extends Menu {
 //                break;
 //        }
 //    }
-
     public String viewBillReports() {
         ArrayList<BillingRecord> billingRecords = MasterPersistence.getInstance().getBillingRecords();
 
@@ -463,24 +453,25 @@ public class EmployeeMenu extends Menu {
 
     }
 
-    public void viewCNICCustomers(ArrayList<Customer> customers, ArrayList<NADRARecord> nadraRecords) {
+    public String viewCNICCustomers() {
+        ArrayList<Customer> customers = MasterPersistence.getInstance().getCustomers();
+        ArrayList<NADRARecord> nadraRecords = MasterPersistence.getInstance().getNadraRecords();
+        StringBuilder message = new StringBuilder();
         if (customers != null) {
             LocalDate now = LocalDate.now();
-            System.out.println("Displaying customers with CNICs expiring soon: ");
             for (Customer c : customers) {
                 for (NADRARecord n : nadraRecords) {
                     if (n.getCNIC().equals(c.getCNIC())) {
                         //Check if date is within the next 30 days
                         LocalDate expiry = getExpiryDate(n);
                         if (!expiry.isBefore(now) && !expiry.isAfter(now.plusDays(30))) {
-                            System.out.println(c);
+                            message.append(c.toString()).append('\n');
                         }
-
                     }
                 }
             }
-        } else System.out.println("There are no customers! ");
-        System.out.println("--------------------------");
+        } else message.append("There are no customers! ");
+        return message.toString();
     }
 
     private LocalDate getExpiryDate(NADRARecord n) {
@@ -616,6 +607,20 @@ public class EmployeeMenu extends Menu {
 
         }
         System.out.println("Tariff details updated!\n");
+    }
+
+    public void addCustomer(JFrame parent) {
+        ArrayList<Customer> customers = MasterPersistence.getInstance().getCustomers();
+        AddCustomerScreen addCustomerScreen = new AddCustomerScreen(parent);
+        if (addCustomerScreen.isSubmitted()) {
+            Model.Customer customer = addCustomerScreen.getNewCustomer();
+            if (!customers.contains(customer)) {
+                customers.add(customer);
+                MasterPersistence.getInstance().setCustomersUpdated();
+            } else {
+                JOptionPane.showMessageDialog(parent, "Customer ID already exists!");
+            }
+        }
     }
 
     public void updateCustomerInfo(ArrayList<Customer> customers) {

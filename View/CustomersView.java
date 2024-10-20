@@ -1,5 +1,6 @@
 package View;
 
+import Controller.EmployeeMenu;
 import Model.Customer;
 import Model.MasterPersistence;
 
@@ -18,7 +19,10 @@ public class CustomersView extends JFrame {
     JScrollPane scrollPane;
     ArrayList<Customer> customers;
 
-    public CustomersView() {
+    EmployeeMenu employeeMenu;
+
+    public CustomersView(EmployeeMenu employeeMenu) {
+        this.employeeMenu = employeeMenu;
         init();
     }
 
@@ -89,9 +93,7 @@ public class CustomersView extends JFrame {
 
         btnAdd.addActionListener(e -> addCustomer());
         btnDelete.addActionListener(e -> removeCustomer());
-        btnBack.addActionListener(e -> {
-            dispose();
-        });
+        btnBack.addActionListener(e -> dispose());
 
         table.getSelectionModel().addListSelectionListener(e -> {
             btnDelete.setEnabled(!table.getSelectionModel().isSelectionEmpty());
@@ -107,16 +109,7 @@ public class CustomersView extends JFrame {
     }
 
     private void addCustomer() {
-        AddCustomerScreen addCustomerScreen = new AddCustomerScreen(this);
-        if (addCustomerScreen.isSubmitted()) {
-            Model.Customer customer = addCustomerScreen.getNewCustomer();
-            if (!customers.contains(customer)) {
-                customers.add(customer);
-                MasterPersistence.getInstance().setCustomersUpdated();
-            } else {
-                JOptionPane.showMessageDialog(this, "Customer ID already exists!");
-            }
-        }
+        employeeMenu.addCustomer(this);
         repaint();
         revalidate();
     }

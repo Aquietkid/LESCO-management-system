@@ -52,10 +52,10 @@ public class EmployeeMenuScreen extends JFrame {
         JButton changePasswordButton = new JButton("Change Password");
         JButton exitButton = new JButton("Exit");
 
-        customersButton.addActionListener(e -> new CustomersView());
+        customersButton.addActionListener(e -> new CustomersView(employeeMenu));
         billsButton.addActionListener(e -> new BillsViewEmployee(employeeMenu));
         tariffsAndTaxesButton.addActionListener(e -> new TariffTaxView());
-        NADRAButton.addActionListener(e -> new NADRARecordView());
+        NADRAButton.addActionListener(e -> new NADRARecordView(employeeMenu));
         changePasswordButton.addActionListener(e -> new PasswordChangeScreen(employeeMenu));
         exitButton.addActionListener(e -> this.dispose());
 
