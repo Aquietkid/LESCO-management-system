@@ -47,6 +47,9 @@ public class NADRARecordView extends JFrame {
             if (row >= 0 && col >= 0) {
                 String value = (String) tableModel.getValueAt(row, col);
                 NADRARecord nadraRecord = nadraRecords.get(row);
+                if(row == 0 || row == 1) {
+                    return;
+                }
 
                 if (JOptionPane.showConfirmDialog(this, "Are you sure you want to update NADRA details? ") == JOptionPane.YES_OPTION) {
                     switch (col) {

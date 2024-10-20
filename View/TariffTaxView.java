@@ -5,6 +5,7 @@ import Model.MasterPersistence;
 import Model.TariffTax;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
@@ -22,7 +23,9 @@ public class TariffTaxView extends JFrame {
         setTitle("Tariff Tax Information");
         setSize(600, 400);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
 
         String[] columnNames = {"Meter Type", "Customer Type", "Regular Unit Price", "Peak Hour Unit Price", "Tax Percentage", "Fixed Charges"};
 
@@ -33,9 +36,7 @@ public class TariffTaxView extends JFrame {
         panelButtons.add(btnExit);
         tariffTable.setFillsViewportHeight(true);
 
-        btnExit.addActionListener(e -> {
-            dispose();
-        });
+        btnExit.addActionListener(e -> dispose());
 
         ArrayList<TariffTax> tariffTaxes = MasterPersistence.getInstance().getTariffTaxes();
 
@@ -52,8 +53,10 @@ public class TariffTaxView extends JFrame {
         }
 
         JScrollPane scrollPane = new JScrollPane(tariffTable);
-        add(scrollPane, BorderLayout.CENTER);
-        add(panelButtons, BorderLayout.SOUTH);
+        panel.add(scrollPane, BorderLayout.CENTER);
+        panel.add(panelButtons, BorderLayout.SOUTH);
+        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        add(panel);
         setVisible(true);
 
 

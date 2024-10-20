@@ -1,7 +1,11 @@
 package View;
 
+import Model.MasterPersistence;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class CustomerMenu extends JFrame {
     private final Controller.CustomerMenu customerMenu;
@@ -40,10 +44,19 @@ public class CustomerMenu extends JFrame {
         add(customerMenuPanel);
         ImageIcon logo = new ImageIcon("Assets/lesco-pk-logo.png");
         setIconImage(logo.getImage());
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setBounds(560, 190, 800, 600);
         setTitle("Customer Menu");
         setMinimumSize(new Dimension(400, 300));
         setVisible(true);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                super.windowClosed(e);
+                new LoginScreen();
+                dispose();
+            }
+        });
     }
 }

@@ -127,4 +127,55 @@ public class BillsViewEmployee extends JFrame {
             MasterPersistence.getInstance().setBillingRecordsUpdated();
         }
     }
+
+    /**
+     * Determines if any BillingRecord in the list has a billing month that is newer
+     * than the selected bill's billing month.
+     *
+     * @param billingRecords The list of billing records.
+     * @param selectedBill The selected BillingRecord to compare against.
+     * @return true if there is a newer bill, false otherwise.
+     */
+    public static boolean containsNewerBill(ArrayList<BillingRecord> billingRecords, BillingRecord selectedBill) {
+        String selectedBillingMonth = selectedBill.getBillingMonth();
+
+        for (BillingRecord record : billingRecords) {
+            String recordBillingMonth = record.getBillingMonth();
+
+            // Compare the billing months. The format is assumed to be MM/YYYY.
+            if (isNewerBillingMonth(recordBillingMonth, selectedBillingMonth)) {
+                return true;  // Found a bill that is newer
+            }
+        }
+
+        return false; // No newer bill found
+    }
+
+    /**
+     * Compares two billing months and returns true if the first
+     * billing month is newer than the second billing month.
+     *
+     * @param billingMonth1 The first billing month to compare.
+     * @param billingMonth2 The second billing month to compare.
+     * @return true if billingMonth1 is newer than billingMonth2, false otherwise.
+     */
+    private static boolean isNewerBillingMonth(String billingMonth1, String billingMonth2) {
+        String[] parts1 = billingMonth1.split("/");
+        String[] parts2 = billingMonth2.split("/");
+
+        int month1 = Integer.parseInt(parts1[0]);
+        int year1 = Integer.parseInt(parts1[1]);
+        int month2 = Integer.parseInt(parts2[0]);
+        int year2 = Integer.parseInt(parts2[1]);
+
+        // Compare years first
+        if (year1 > year2) {
+            return true;
+        } else if (year1 == year2) {
+            // If years are the same, compare months
+            return month1 > month2;
+        }
+
+        return false;
+    }
 }

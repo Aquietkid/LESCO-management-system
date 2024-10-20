@@ -457,6 +457,7 @@ public class EmployeeMenu extends Menu {
         ArrayList<Customer> customers = MasterPersistence.getInstance().getCustomers();
         ArrayList<NADRARecord> nadraRecords = MasterPersistence.getInstance().getNadraRecords();
         StringBuilder message = new StringBuilder();
+        boolean flag = false;
         if (customers != null) {
             LocalDate now = LocalDate.now();
             for (Customer c : customers) {
@@ -466,11 +467,13 @@ public class EmployeeMenu extends Menu {
                         LocalDate expiry = getExpiryDate(n);
                         if (!expiry.isBefore(now) && !expiry.isAfter(now.plusDays(30))) {
                             message.append(c.toString()).append('\n');
+                            flag = true;
                         }
                     }
                 }
             }
-        } else message.append("There are no customers! ");
+        }
+        if(!flag) message.append("There are no customers with CNICs expiring soon.");
         return message.toString();
     }
 

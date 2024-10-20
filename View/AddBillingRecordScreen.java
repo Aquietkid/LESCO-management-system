@@ -27,7 +27,6 @@ public class AddBillingRecordScreen extends JFrame {
 
     private void init() {
         setTitle("Add New Billing Record");
-        setLayout(new GridLayout(10, 2, 10, 10));
         setSize(500, 400);
         setLocationRelativeTo(null);
 
@@ -56,31 +55,36 @@ public class AddBillingRecordScreen extends JFrame {
         JLabel lblFixedCharges = new JLabel("Auto-calculated");
         JLabel lblTotalBillingAmount = new JLabel("Auto-calculated");
 
-        add(new JLabel("Customer ID:"));
-        add(spnCustomerID);
-        add(new JLabel("Billing Month (MM/YYYY):"));
-        add(spnBillingMonth);
-        add(new JLabel("Regular Meter Reading:"));
-        add(spnRegularReading);
-        add(new JLabel("Peak Meter Reading:"));
-        add(spnPeakReading);
-        add(new JLabel("Reading Entry Date:"));
-        add(spnReadingEntryDate);
-        add(new JLabel("Due Date:"));
-        add(spnDueDate);
-        add(new JLabel("Cost of Electricity:"));
-        add(lblCostOfElectricity);
-        add(new JLabel("Sales Tax:"));
-        add(lblSalesTax);
-        add(new JLabel("Fixed Charges:"));
-        add(lblFixedCharges);
-        add(new JLabel("Total Billing Amount:"));
-        add(lblTotalBillingAmount);
+        JPanel panel = new JPanel(new GridLayout(0, 2, 10, 10));
+
+        panel.add(new JLabel("Customer ID:"));
+        panel.add(spnCustomerID);
+        panel.add(new JLabel("Billing Month (MM/YYYY):"));
+        panel.add(spnBillingMonth);
+        panel.add(new JLabel("Regular Meter Reading:"));
+        panel.add(spnRegularReading);
+        panel.add(new JLabel("Peak Meter Reading:"));
+        panel.add(spnPeakReading);
+        panel.add(new JLabel("Reading Entry Date:"));
+        panel.add(spnReadingEntryDate);
+        panel.add(new JLabel("Due Date:"));
+        panel.add(spnDueDate);
+        panel.add(new JLabel("Cost of Electricity:"));
+        panel.add(lblCostOfElectricity);
+        panel.add(new JLabel("Sales Tax:"));
+        panel.add(lblSalesTax);
+        panel.add(new JLabel("Fixed Charges:"));
+        panel.add(lblFixedCharges);
+        panel.add(new JLabel("Total Billing Amount:"));
+        panel.add(lblTotalBillingAmount);
 
         JButton btnAdd = new JButton("Add");
         JButton btnCancel = new JButton("Cancel");
-        add(btnAdd);
-        add(btnCancel);
+        panel.add(btnAdd);
+        panel.add(btnCancel);
+
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        add(panel);
 
         btnAdd.addActionListener(e -> onSubmit());
 
