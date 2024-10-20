@@ -313,12 +313,9 @@ public class EmployeeMenu extends Menu {
                 CNICcount++;
             }
             if (CNICcount >= 3) {
-                break;
+                System.out.println("More than 3 meters can not be added for one CNIC! Aborting addition...");
+                return;
             }
-        }
-        if (CNICcount == 3) {
-            System.out.println("More than 3 meters can not be added for one CNIC! Aborting addition...");
-            return;
         }
 
         System.out.println("Enter customer name: ");

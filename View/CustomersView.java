@@ -71,7 +71,7 @@ public class CustomersView extends JFrame {
             int row = e.getFirstRow();
             int col = e.getColumn();
             if (row >= 0 && col >= 0) {
-                if(col == 0 || col == 1 || col == 9) return;
+                if (col == 0 || col == 1 || col == 9) return;
                 String value = (String) model.getValueAt(row, col);
                 Customer customer = customers.get(row);
 
@@ -103,7 +103,9 @@ public class CustomersView extends JFrame {
 
         add(panelButtons, BorderLayout.SOUTH);
         add(panelTable, BorderLayout.CENTER);
-
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        ImageIcon logo = new ImageIcon("Assets/lesco-pk-logo.png");
+        setIconImage(logo.getImage());
 
         setVisible(true);
 
@@ -117,6 +119,8 @@ public class CustomersView extends JFrame {
             customers.add(customer);
             MasterPersistence.getInstance().setCustomersUpdated();
         }
+        repaint();
+        revalidate();
     }
 
     private void loadCustomerData() {
@@ -139,6 +143,7 @@ public class CustomersView extends JFrame {
     private void removeCustomer() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow >= 0) {
+            JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this customer?", "Confirm deletion", JOptionPane.YES_NO_OPTION);
             customers.remove(selectedRow);
             model.removeRow(selectedRow);
         } else {

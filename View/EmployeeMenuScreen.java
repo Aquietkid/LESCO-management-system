@@ -53,6 +53,7 @@ public class EmployeeMenuScreen extends JFrame {
         setVisible(true);
         setMinimumSize(new Dimension(400, 300));
 
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         add(panelMenu);
 
         setTitle("Employee Menu");
