@@ -1,5 +1,6 @@
 package Model;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -14,7 +15,7 @@ public class NADRADBPersistence {
                 bw.newLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -38,7 +39,7 @@ public class NADRADBPersistence {
                 nadraRecords.add(record);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
 
         return nadraRecords;

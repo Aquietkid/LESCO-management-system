@@ -13,15 +13,9 @@ public class CustomersView extends JFrame {
 
     JTable table;
     DefaultTableModel model;
-
-    JButton btnAdd;
-    JButton btnDelete;
-    JButton btnBack;
-
-    JPanel panelButtons;
-    JPanel panelTable;
+    JButton btnAdd, btnDelete, btnBack;
+    JPanel panelButtons, panelTable;
     JScrollPane scrollPane;
-
     ArrayList<Customer> customers;
 
     public CustomersView() {
@@ -29,11 +23,9 @@ public class CustomersView extends JFrame {
     }
 
     private void init() {
-
         setTitle("Customer Management");
         setSize(800, 600);
         setLocationRelativeTo(null);
-
         String[] columnNames = {
                 "Customer ID",
                 "CNIC",
@@ -76,16 +68,20 @@ public class CustomersView extends JFrame {
                 Customer customer = customers.get(row);
 
                 if (JOptionPane.showConfirmDialog(this, "Are you sure you want to update customer details? ") == JOptionPane.YES_OPTION) {
-                    switch (col) {
-                        case 2 -> customer.setCustomerName(value);
-                        case 3 -> customer.setAddress(value);
-                        case 4 -> customer.setPhone(value);
-                        case 5 -> customer.setIsCommercial(Boolean.parseBoolean(value));
-                        case 6 -> customer.setThreePhase(Boolean.parseBoolean(value));
-                        case 7 -> customer.setRegularUnitsConsumed(Float.parseFloat(value));
-                        case 8 -> customer.setPeakUnitsConsumed(Float.parseFloat(value));
+                    try {
+                        switch (col) {
+                            case 2 -> customer.setCustomerName(value);
+                            case 3 -> customer.setAddress(value);
+                            case 4 -> customer.setPhone(value);
+                            case 5 -> customer.setIsCommercial(Boolean.parseBoolean(value));
+                            case 6 -> customer.setThreePhase(Boolean.parseBoolean(value));
+                            case 7 -> customer.setRegularUnitsConsumed(Float.parseFloat(value));
+                            case 8 -> customer.setPeakUnitsConsumed(Float.parseFloat(value));
+                        }
+                        MasterPersistence.getInstance().setCustomersUpdated();
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(this, ex.getMessage());
                     }
-                    MasterPersistence.getInstance().setCustomersUpdated();
                 }
             }
 
@@ -114,8 +110,12 @@ public class CustomersView extends JFrame {
         AddCustomerScreen addCustomerScreen = new AddCustomerScreen(this);
         if (addCustomerScreen.isSubmitted()) {
             Model.Customer customer = addCustomerScreen.getNewCustomer();
-            customers.add(customer);
-            MasterPersistence.getInstance().setCustomersUpdated();
+            if (!customers.contains(customer)) {
+                customers.add(customer);
+                MasterPersistence.getInstance().setCustomersUpdated();
+            } else {
+                JOptionPane.showMessageDialog(this, "Customer ID already exists!");
+            }
         }
         repaint();
         revalidate();

@@ -10,7 +10,6 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class TariffTaxView extends JFrame {
-    private JTable tariffTable;
     private DefaultTableModel tableModel;
     JPanel panelButtons;
     JButton btnExit;
@@ -28,7 +27,7 @@ public class TariffTaxView extends JFrame {
         String[] columnNames = {"Meter Type", "Customer Type", "Regular Unit Price", "Peak Hour Unit Price", "Tax Percentage", "Fixed Charges"};
 
         tableModel = new DefaultTableModel(columnNames, 0);
-        tariffTable = new JTable(tableModel);
+        JTable tariffTable = new JTable(tableModel);
         panelButtons = new JPanel();
         btnExit = new JButton("Exit");
         panelButtons.add(btnExit);

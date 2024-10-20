@@ -12,7 +12,7 @@ public class PasswordChangeScreen extends JFrame {
     JLabel lblConfirmPassword;
 
     JPasswordField txtOldPassword;
-    JPasswordField txtNnewPassword;
+    JPasswordField txtNewPassword;
     JPasswordField txtConfirmPassword;
 
     JButton btnExit;
@@ -20,7 +20,7 @@ public class PasswordChangeScreen extends JFrame {
 
     JPanel panel;
 
-    Controller.EmployeeMenu employeeMenu;
+    final Controller.EmployeeMenu employeeMenu;
 
     PasswordChangeScreen(Controller.EmployeeMenu employeeMenu) {
         this.employeeMenu = employeeMenu;
@@ -34,7 +34,7 @@ public class PasswordChangeScreen extends JFrame {
         lblConfirmPassword = new JLabel("Confirm Password");
 
         txtOldPassword = new JPasswordField();
-        txtNnewPassword = new JPasswordField();
+        txtNewPassword = new JPasswordField();
         txtConfirmPassword = new JPasswordField();
 
         btnChangePassword = new JButton("Change Password");
@@ -44,7 +44,7 @@ public class PasswordChangeScreen extends JFrame {
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         btnChangePassword.addActionListener(e -> {
-            int val = employeeMenu.changePassword(String.valueOf(txtOldPassword.getPassword()), String.valueOf(txtNnewPassword.getPassword()), String.valueOf(txtConfirmPassword.getPassword()));
+            int val = employeeMenu.changePassword(String.valueOf(txtOldPassword.getPassword()), String.valueOf(txtNewPassword.getPassword()), String.valueOf(txtConfirmPassword.getPassword()));
             System.out.println(val);
             if (val == EmployeeMenu.PASSWORD_MISMATCH) {
                 JOptionPane.showMessageDialog(this, "Incorrect password!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -68,7 +68,7 @@ public class PasswordChangeScreen extends JFrame {
         panel.add(lblOldPassword);
         panel.add(txtOldPassword);
         panel.add(lblNewPassword);
-        panel.add(txtNnewPassword);
+        panel.add(txtNewPassword);
         panel.add(lblConfirmPassword);
         panel.add(txtConfirmPassword);
         panel.add(btnChangePassword);

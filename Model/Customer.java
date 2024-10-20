@@ -5,8 +5,8 @@ package Model;/*
  */
 public class Customer implements User {
 
-    protected String customerID; //4-digit number
-    protected String CNIC; //13-digit without dashes
+    protected final String customerID; //4-digit number
+    protected final String CNIC; //13-digit without dashes
     protected String customerName;
     protected String address;
     protected String phone;

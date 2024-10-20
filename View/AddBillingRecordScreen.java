@@ -12,14 +12,20 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class AddBillingRecordScreen extends JFrame {
-    private JSpinner spnCustomerID, spnRegularReading, spnPeakReading;
-    private JSpinner spnBillingMonth, spnReadingEntryDate, spnDueDate;
-    private JLabel lblCostOfElectricity, lblSalesTax, lblFixedCharges, lblTotalBillingAmount;
-    private JButton btnAdd, btnCancel;
+    private JSpinner spnCustomerID;
+    private JSpinner spnRegularReading;
+    private JSpinner spnPeakReading;
+    private JSpinner spnBillingMonth;
+    private JSpinner spnReadingEntryDate;
+    private JSpinner spnDueDate;
     private boolean isSubmitted = false;
     private BillingRecord newBillingRecord;
 
     public AddBillingRecordScreen() {
+        init();
+    }
+
+    private void init() {
         setTitle("Add New Billing Record");
         setLayout(new GridLayout(10, 2, 10, 10));
         setSize(500, 400);
@@ -45,10 +51,10 @@ public class AddBillingRecordScreen extends JFrame {
         JSpinner.DateEditor dueDateEditor = new JSpinner.DateEditor(spnDueDate, "yyyy-MM-dd");
         spnDueDate.setEditor(dueDateEditor);
 
-        lblCostOfElectricity = new JLabel("Auto-calculated");
-        lblSalesTax = new JLabel("Auto-calculated");
-        lblFixedCharges = new JLabel("Auto-calculated");
-        lblTotalBillingAmount = new JLabel("Auto-calculated");
+        JLabel lblCostOfElectricity = new JLabel("Auto-calculated");
+        JLabel lblSalesTax = new JLabel("Auto-calculated");
+        JLabel lblFixedCharges = new JLabel("Auto-calculated");
+        JLabel lblTotalBillingAmount = new JLabel("Auto-calculated");
 
         add(new JLabel("Customer ID:"));
         add(spnCustomerID);
@@ -71,8 +77,8 @@ public class AddBillingRecordScreen extends JFrame {
         add(new JLabel("Total Billing Amount:"));
         add(lblTotalBillingAmount);
 
-        btnAdd = new JButton("Add");
-        btnCancel = new JButton("Cancel");
+        JButton btnAdd = new JButton("Add");
+        JButton btnCancel = new JButton("Cancel");
         add(btnAdd);
         add(btnCancel);
 
@@ -105,7 +111,7 @@ public class AddBillingRecordScreen extends JFrame {
             float costOfElectricity = (float) calculateCostOfElectricity(regularReading, peakReading, myTariffTax);
             float salesTaxAmount = (float) calculateSalesTax(costOfElectricity, myTariffTax);
             float fixedCharges = (float) myTariffTax.getFixedCharges();
-            float totalBillingAmount = (float) costOfElectricity + salesTaxAmount + fixedCharges;
+            float totalBillingAmount = costOfElectricity + salesTaxAmount + fixedCharges;
 
             newBillingRecord = new BillingRecord(customerID, billingMonth, regularReading, peakReading, readingEntryDate, costOfElectricity, salesTaxAmount, fixedCharges, totalBillingAmount, dueDate);
 

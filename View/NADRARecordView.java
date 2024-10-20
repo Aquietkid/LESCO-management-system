@@ -9,7 +9,6 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class NADRARecordView extends JFrame {
-    private JTable nadraTable;
     private DefaultTableModel tableModel;
 
     public NADRARecordView() {
@@ -25,7 +24,7 @@ public class NADRARecordView extends JFrame {
         String[] columnNames = {"CNIC", "Issuance Date", "Expiry Date"};
 
         tableModel = new DefaultTableModel(columnNames, 0);
-        nadraTable = new JTable(tableModel);
+        JTable nadraTable = new JTable(tableModel);
         nadraTable.setFillsViewportHeight(true);
 
         ArrayList<NADRARecord> nadraRecords = MasterPersistence.getInstance().getNadraRecords();

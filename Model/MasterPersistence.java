@@ -5,15 +5,15 @@ import java.util.ArrayList;
 
 /**
  * The master resource manager.
- * Holds ArrayList<E> objects of Customer, Employee, BillingRecord, NADRARecord, and TarrifTax types.
+ * Holds ArrayList<E> objects of Customer, Employee, BillingRecord, NADRARecord, and TariffTax types.
  * The data can be accessed using methods.
  */
 public class MasterPersistence {
-    private ArrayList<Customer> customers;
-    private ArrayList<Employee> employees;
-    private ArrayList<BillingRecord> billingRecords;
-    private ArrayList<NADRARecord> nadraRecords;
-    private ArrayList<TariffTax> tariffTaxes;
+    private final ArrayList<Customer> customers;
+    private final ArrayList<Employee> employees;
+    private final ArrayList<BillingRecord> billingRecords;
+    private final ArrayList<NADRARecord> nadraRecords;
+    private final ArrayList<TariffTax> tariffTaxes;
 
     boolean customersUpdated = false;
     boolean employeesUpdated = false;

@@ -1,5 +1,6 @@
 package Model;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -16,7 +17,7 @@ public class BillingRecordPersistence {
                 bw.write(record.toFileString());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -55,7 +56,7 @@ public class BillingRecordPersistence {
                 billingRecords.add(record);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
 
         return billingRecords;

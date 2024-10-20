@@ -5,18 +5,18 @@ import Model.MasterPersistence;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.DateFormatter;
 import java.awt.*;
 import java.util.ArrayList;
 
 public class AddCustomerScreen extends JFrame {
-    private JTextField txtCNIC, txtCustomerName, txtAddress, txtPhone;
-    private JCheckBox chkIsCommercial, chkIsThreePhase;
-    private JLabel lblConnectionDate;
-    private JButton btnAdd, btnCancel;
+    private final JTextField txtCNIC;
+    private final JTextField txtCustomerName;
+    private final JTextField txtAddress;
+    private final JTextField txtPhone;
+    private final JCheckBox chkIsCommercial;
+    private final JCheckBox chkIsThreePhase;
     private boolean isSubmitted = false;
     private Customer newCustomer;
-    private JPanel panel;
 
     public AddCustomerScreen(JFrame parent) {
         setLayout(new BorderLayout());
@@ -32,9 +32,9 @@ public class AddCustomerScreen extends JFrame {
         chkIsCommercial = new JCheckBox();
         chkIsThreePhase = new JCheckBox();
 
-        lblConnectionDate = new JLabel("Auto-filled");
+        JLabel lblConnectionDate = new JLabel("Auto-filled");
 
-        panel = new JPanel(new GridLayout(0, 2));
+        JPanel panel = new JPanel(new GridLayout(0, 2));
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         panel.add(new JLabel("CNIC:"));
@@ -58,7 +58,9 @@ public class AddCustomerScreen extends JFrame {
         panel.add(new JLabel("Connection Date:"));
         panel.add(lblConnectionDate);
 
+        JButton btnAdd;
         panel.add(btnAdd = new JButton("Add"));
+        JButton btnCancel;
         panel.add(btnCancel = new JButton("Cancel"));
 
         // Button action listeners
@@ -130,10 +132,8 @@ public class AddCustomerScreen extends JFrame {
         });
 
         btnCancel.addActionListener(e -> dispose());
-
         setLayout(new BorderLayout());
         add(panel, BorderLayout.CENTER);
-
         setVisible(true);
     }
 

@@ -4,7 +4,6 @@ import Model.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -130,67 +129,72 @@ public class EmployeeMenu extends Menu {
      * basis of the choice variable in an infinite
      * loop. The menu can be exited using the choice
      * value corresponding to exit.
+     *
+     * @return
      */
-    public void runMenu(Scanner input, ArrayList<Customer> customers, ArrayList<TariffTax> tariffs, ArrayList<NADRARecord> NADRARecords, ArrayList<BillingRecord> billingRecords) {
-        int choice;
-        do {
-            this.displayMenu();
-            System.out.println("Enter your choice");
-            choice = input.nextInt();
-            if (choice > 12 || choice < 0) {
-                System.out.println("Invalid choice!");
-            } else if (choice == 12) {
-                return;
-            } else this.executeMenuTask(choice, customers, tariffs, NADRARecords, billingRecords);
-        } while (true);
-    }
+//    public void runMenu(Scanner input, ArrayList<Customer> customers, ArrayList<TariffTax> tariffs, ArrayList<NADRARecord> NADRARecords, ArrayList<BillingRecord> billingRecords) {
+//        int choice;
+//        do {
+//            this.displayMenu();
+//            System.out.println("Enter your choice");
+//            choice = input.nextInt();
+//            if (choice > 12 || choice < 0) {
+//                System.out.println("Invalid choice!");
+//            } else if (choice == 12) {
+//                return;
+//            } else this.executeMenuTask(choice, customers, tariffs, NADRARecords, billingRecords);
+//        } while (true);
+//    }
 
-    public void executeMenuTask(int choice, ArrayList<Customer> customers, ArrayList<TariffTax> tariffs, ArrayList<NADRARecord> NADRARecords, ArrayList<BillingRecord> billingRecords) {
-        switch (choice) {
-            case 1:
-//                addBillingRecord(billingRecords, customers, tariffs);
-                break;
-            case 2:
-                modifyBill();
-                break;
-            case 3:
-                addNewCustomer(customers);
-                break;
-            case 4:
-                updateCustomerInfo(customers);
-                break;
-            case 5:
-                recordBillPayment(customers, billingRecords);
-                break;
-            case 6:
-                updateTariffTaxInfo(tariffs);
-                break;
-            case 7:
-                viewCustomerBills(customers, billingRecords);
-                break;
-            case 8:
-                viewBillReports(billingRecords);
-                break;
-            case 9:
-                viewCNICCustomers(customers, NADRARecords);
-                break;
-            case 10:
-                viewAllCustomers(customers);
-                break;
-            case 11:
-                changePassword();
-                break;
-            default:
-                System.out.println("Incorrect choice!");
-                break;
-        }
-    }
+//    public void executeMenuTask(int choice, ArrayList<Customer> customers, ArrayList<TariffTax> tariffs, ArrayList<NADRARecord> NADRARecords, ArrayList<BillingRecord> billingRecords) {
+//        switch (choice) {
+//            case 1:
+////                addBillingRecord(billingRecords, customers, tariffs);
+//                break;
+//            case 2:
+////                modifyBill();
+//                break;
+//            case 3:
+//                addNewCustomer(customers);
+//                break;
+//            case 4:
+//                updateCustomerInfo(customers);
+//                break;
+//            case 5:
+//                recordBillPayment(customers, billingRecords);
+//                break;
+//            case 6:
+//                updateTariffTaxInfo(tariffs);
+//                break;
+//            case 7:
+//                viewCustomerBills(customers, billingRecords);
+//                break;
+//            case 8:
+//                viewBillReports(billingRecords);
+//                break;
+//            case 9:
+//                viewCNICCustomers(customers, NADRARecords);
+//                break;
+//            case 10:
+//                viewAllCustomers(customers);
+//                break;
+//            case 11:
+//                changePassword();
+//                break;
+//            default:
+//                System.out.println("Incorrect choice!");
+//                break;
+//        }
+//    }
 
-    private void viewBillReports(ArrayList<BillingRecord> billingRecords) {
+    public String viewBillReports() {
+        ArrayList<BillingRecord> billingRecords = MasterPersistence.getInstance().getBillingRecords();
+
         int countPaidBills = 0;
         int countUnpaidBills = 0;
         float unpaidAmount = 0.0f;
         float paidAmount = 0.0f;
+
         for (BillingRecord br : billingRecords) {
             if (br.getBillPaidStatus()) {
                 countPaidBills++;
@@ -200,20 +204,17 @@ public class EmployeeMenu extends Menu {
                 unpaidAmount += br.getTotalBillingAmount();
             }
         }
-        System.out.println("Models.Bill report: ");
-        System.out.println("Total unpaid bills: " + countUnpaidBills + "\nTotal amount unpaid: " + unpaidAmount);
-        System.out.println("Total paid bills: " + countPaidBills + "\nTotal amount paid: " + paidAmount);
-        System.out.println("-----------------------------------------------------------------------------------");
+        StringBuilder message = new StringBuilder();
+        message.append("Bill report: ");
+        message.append("\nTotal unpaid bills: ").append(countUnpaidBills).append("\nTotal amount unpaid: ").append(unpaidAmount);
+        message.append("\nTotal paid bills: " + countPaidBills + "\nTotal amount paid: " + paidAmount);
+        return message.toString();
     }
 
     private void viewAllCustomers(ArrayList<Customer> customers) {
         for (Customer customer : customers) {
             System.out.println(customer.toString());
         }
-    }
-
-    public void modifyBill() {
-        // TODO Create method
     }
 
     public void addNewCustomer(ArrayList<Customer> customers) {

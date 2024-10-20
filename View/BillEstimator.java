@@ -10,9 +10,6 @@ public class BillEstimator extends JFrame {
     private JSpinner spinRegularUnits;
     private JSpinner spinPeakUnits;
 
-    private JLabel lblRegularUnits;
-    private JLabel lblPeakUnits;
-
     private JLabel lblElectricityCost;
     private JLabel lblSalesTax;
     private JLabel lblFixedCharges;
@@ -44,7 +41,7 @@ public class BillEstimator extends JFrame {
 
     private void initRegularUnitsPanel() {
         spinRegularUnits = new JSpinner();
-        lblRegularUnits = new JLabel("Regular Units Reading");
+        JLabel lblRegularUnits = new JLabel("Regular Units Reading");
         JPanel regularUnitsPanel = new JPanel();
         regularUnitsPanel.setBorder(BorderFactory.createTitledBorder("Regular Units"));
         regularUnitsPanel.setLayout(new BorderLayout(20, 20));
@@ -62,7 +59,7 @@ public class BillEstimator extends JFrame {
         peakUnitsPanel.setLayout(new BorderLayout(20, 20));
         peakUnitsPanel.setBorder(BorderFactory.createTitledBorder("Peak Hour Units"));
         spinPeakUnits = new JSpinner();
-        lblPeakUnits = new JLabel("Peak Units Reading");
+        JLabel lblPeakUnits = new JLabel("Peak Units Reading");
         peakUnitsPanel.add(lblPeakUnits, BorderLayout.WEST);
         peakUnitsPanel.add(spinPeakUnits, BorderLayout.CENTER);
         spinPeakUnits.setModel(new SpinnerNumberModel(minPeakUnits, minPeakUnits, Float.MAX_VALUE, 0.01));
@@ -74,7 +71,6 @@ public class BillEstimator extends JFrame {
 
     private void initLabels() {
         JPanel labelsPanel = new JPanel();
-//        labelsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
         labelsPanel.setLayout(new GridLayout(4, 1, 20, 20));
         labelsPanel.setBorder(BorderFactory.createTitledBorder("Cost Breakdown"));
         lblTotal = new JLabel("Total Reading: ");

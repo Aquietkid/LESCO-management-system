@@ -1,5 +1,6 @@
 package Model;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ public class CustomerPersistence {
                 customers.add(customer);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
 
         return customers;
@@ -46,9 +47,8 @@ public class CustomerPersistence {
             for (Customer customer : customers) {
                 bw.write(customer.toFileString());
             }
-        } catch (
-                IOException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

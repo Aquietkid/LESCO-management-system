@@ -2,10 +2,13 @@ package View;
 
 import Controller.CustomerMenu;
 import Controller.LoginMenu;
+import Model.MasterPersistence;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class LoginScreen {
     private final JFrame frame1;
@@ -48,6 +51,15 @@ public class LoginScreen {
         frame1.add(usernameLabel);
         frame1.add(passwordLabel);
         frame1.setMinimumSize(new Dimension(400, 300));
+
+        frame1.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                //Initial file-reading
+                super.windowOpened(e);
+                MasterPersistence.getInstance();
+            }
+        });
     }
 
     private void initUsernameTextField() {
@@ -82,7 +94,7 @@ public class LoginScreen {
             int loginStatus = myUser.getLoginStatus(username, password);
 
             if (loginStatus == LoginMenu.CUSTOMER_ID) {
-
+//                View.CustomerMenu customerMenuView = new View.CustomerMenu(new CustomerMenu(myUser.getMyUser()));
                 CustomerMenu customerMenu = new CustomerMenu(myUser.getMyUser());
                 frame1.dispose();
                 customerMenu.runMenuGUI();

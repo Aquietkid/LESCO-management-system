@@ -13,8 +13,7 @@ public class CNICUpdateScreen extends javax.swing.JFrame {
     JLabel lblCNIC;
     JTextField txtCNIC;
     JButton btnUpdateCNICExpiry;
-    DateInput dateInput;
-    private Customer myCustomer;
+    private final Customer myCustomer;
 
     public CNICUpdateScreen(ArrayList<NADRARecord> nadraRecords, Customer myCustomer) {
         this.nadraRecords = nadraRecords;
@@ -37,7 +36,6 @@ public class CNICUpdateScreen extends javax.swing.JFrame {
                 for(NADRARecord record : nadraRecords) {
                     if(record.getCNIC().equals(txtCNIC.getText())) {
                         record.setExpiryDate(String.format("%02d-%02d-%04d", dateInput.getDate(), dateInput.getMonth(), dateInput.getYear()));
-//                        record.setExpiryDate(dateInput.getDateString());
                         break;
                     }
                 }

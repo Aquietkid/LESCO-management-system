@@ -1,48 +1,3 @@
-//package Utilities;
-//
-//import javax.swing.*;
-//import java.time.LocalDate;
-//
-//public class DateInput extends JPanel {
-//
-//    public static final int AFTER_TODAY = 1;
-//    public static final int BEFORE_TODAY = 2;
-//
-//    JSpinner spinDate;
-//    JSpinner spinMonth;
-//    JSpinner spinYear;
-//    LocalDate date;
-//
-//    int dateEnforcement;
-//
-//    public DateInput() {
-//        init();
-//    }
-//
-//    private void init() {
-//        date = LocalDate.now();
-//        spinDate = new JSpinner();
-//        spinMonth = new JSpinner();
-//        spinYear = new JSpinner();
-//
-//        spinDate.addChangeListener(e -> updateDateValidations());
-//    }
-//
-//    private void updateDateValidations() {
-//        int day = (int) spinDate.getValue();
-//        int month = (int) spinMonth.getValue();
-//        int year = (int) spinYear.getValue();
-//
-//        LocalDate enteredDate = LocalDate.of(day, month, year);
-//
-//        if(dateEnforcement == AFTER_TODAY) {
-//            spinDate.setModel(new SpinnerNumberModel(enteredDate.toEpochDay(), (month == date.getMonthValue()) ? date.getDayOfMonth() : 1, enteredDate.lengthOfMonth(), 1));
-//            spinMonth.setModel(new SpinnerDateModel());
-//        }
-//
-//    }
-//}
-
 package CustomUtilities;
 
 import javax.swing.*;
@@ -76,6 +31,7 @@ public class DateInput extends JPanel {
         LocalDate localDate = LocalDate.now();
 
         Calendar calendar = Calendar.getInstance();
+
         calendar.set(localDate.getYear(), localDate.getMonthValue() - 1, localDate.getDayOfMonth()); // Start date: As of current date at time of execution
         Date initialDate = calendar.getTime();
         Date startDate = calendar.getTime();
@@ -87,11 +43,6 @@ public class DateInput extends JPanel {
 
         return new SpinnerDateModel(initialDate, startDate, endDate, Calendar.DAY_OF_MONTH);
     }
-
-//    public String getDateString() {
-//        DateFormatter formatter = new DateFormatter();
-//
-//    }
 
     public int getDate() {
         return dateModel.getDate().getDate();

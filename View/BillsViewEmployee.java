@@ -8,22 +8,23 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class BillsView extends JFrame {
+public class BillsViewEmployee extends JFrame {
 
     JTable table;
     DefaultTableModel model;
-
     JButton btnAdd;
     JButton btnDelete;
+    JButton btnBillReports;
     JButton btnBack;
-
     JPanel panelButtons;
     JPanel panelTable;
     JScrollPane scrollPane;
-
     ArrayList<BillingRecord> billingRecords;
 
-    public BillsView() {
+    Controller.EmployeeMenu employeeMenu;
+
+    public BillsViewEmployee(Controller.EmployeeMenu employeeMenu) {
+        this.employeeMenu = employeeMenu;
         init();
     }
 
@@ -54,11 +55,13 @@ public class BillsView extends JFrame {
         table.setFillsViewportHeight(true);
         btnAdd = new JButton("Add");
         btnDelete = new JButton("Delete");
+        btnBillReports = new JButton("Bill Reports");
         btnBack = new JButton("Back");
 
         panelButtons = new JPanel();
         panelButtons.add(btnAdd);
         panelButtons.add(btnDelete);
+        panelButtons.add(btnBillReports);
         panelButtons.add(btnBack);
 
         scrollPane = new JScrollPane(table);
@@ -70,6 +73,7 @@ public class BillsView extends JFrame {
 
         btnAdd.addActionListener(e -> addBill());
         btnDelete.addActionListener(e -> removeBill());
+        btnBillReports.addActionListener(e -> JOptionPane.showMessageDialog(this, employeeMenu.viewBillReports()));
         btnBack.addActionListener(e -> dispose());
 
         table.getSelectionModel().addListSelectionListener(e -> btnDelete.setEnabled(!table.getSelectionModel().isSelectionEmpty()));

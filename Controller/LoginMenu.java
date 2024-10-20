@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 public class LoginMenu {
 
-    public static int UNKNOWN_ID = 0;
-    public static int EMPLOYEE_ID = 1;
-    public static int CUSTOMER_ID = 2;
+    public static final int UNKNOWN_ID = 0;
+    public static final int EMPLOYEE_ID = 1;
+    public static final int CUSTOMER_ID = 2;
 
     public int login(String username, String password) {
 
