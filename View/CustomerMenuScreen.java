@@ -1,16 +1,14 @@
 package View;
 
-import Model.MasterPersistence;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class CustomerMenu extends JFrame {
+public class CustomerMenuScreen extends JFrame {
     private final Controller.CustomerMenu customerMenu;
 
-    public CustomerMenu(Controller.CustomerMenu customerMenu) {
+    public CustomerMenuScreen(Controller.CustomerMenu customerMenu) {
         this.customerMenu = customerMenu;
         createUIComponents();
     }

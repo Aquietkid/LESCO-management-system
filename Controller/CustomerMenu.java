@@ -4,11 +4,10 @@ import Model.*;
 import View.BillEstimator;
 import View.BillViewer;
 import View.CNICUpdateScreen;
+import View.CustomerMenuScreen;
 
 import javax.swing.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class CustomerMenu extends Menu {
 
@@ -45,22 +44,22 @@ public class CustomerMenu extends Menu {
 //    }
 
     public void runMenuGUI() {
-        View.CustomerMenu customerMenu = new View.CustomerMenu(this);
+        CustomerMenuScreen customerMenu = new CustomerMenuScreen(this);
     }
 
     public void executeMenuTask(int choice, JFrame customerMenu) { //FOR GUI
         switch (choice) {
-            case View.CustomerMenu.VIEW_BILL:
+            case CustomerMenuScreen.VIEW_BILL:
                 viewBills(MasterPersistence.getInstance().getBillingRecords(), customerMenu);
                 break;
-            case View.CustomerMenu.ESTIMATE_UPCOMING_BILL:
+            case CustomerMenuScreen.ESTIMATE_UPCOMING_BILL:
                 estimateUpcomingBills(MasterPersistence.getInstance().getTariffTaxes(), customerMenu);
                 break;
-            case View.CustomerMenu.UPDATE_CNIC_EXPIRY:
+            case CustomerMenuScreen.UPDATE_CNIC_EXPIRY:
                 // TODO: create GUI version
                 updateCNICExpiry(MasterPersistence.getInstance().getNadraRecords(), customerMenu);
                 break;
-            case View.CustomerMenu.EXIT:
+            case CustomerMenuScreen.EXIT:
                 customerMenu.dispose();
             default:
                 JOptionPane.showMessageDialog(customerMenu, "Invalid choice!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -86,7 +85,8 @@ public class CustomerMenu extends Menu {
     public void estimateUpcomingBills(ArrayList<TariffTax> tariffTaxes, JFrame customerMenu) {
         TariffTax myTariffTax = TariffTax.getTariffTax(tariffTaxes, myCustomer);
         boolean isPeak = myTariffTax.getPeakHourUnitPrice() != null;
-        new BillEstimator(myCustomer.getRegularUnitsConsumed(), myCustomer.getPeakUnitsConsumed(), isPeak, myTariffTax);
+//        new BillEstimator(myCustomer.getRegularUnitsConsumed(), myCustomer.getPeakUnitsConsumed(), isPeak, myTariffTax);
+        new BillEstimator(myCustomer);
     }
 
     // TODO: remove upon successful refactoring of new method

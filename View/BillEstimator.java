@@ -1,9 +1,12 @@
 package View;
 
+import Model.Customer;
+import Model.MasterPersistence;
 import Model.TariffTax;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class BillEstimator extends JFrame {
 
@@ -20,11 +23,25 @@ public class BillEstimator extends JFrame {
     private final boolean isPeak;
     private final TariffTax myTariffTax;
 
-    public BillEstimator(double minReg, double minPeak, boolean isPeak, TariffTax myTariffTax) {
-        this.minRegularUnits = minReg;
-        this.minPeakUnits = minPeak;
-        this.isPeak = isPeak;
-        this.myTariffTax = myTariffTax;
+    private final Customer myCustomer;
+
+//    public BillEstimator(double minReg, double minPeak, boolean isPeak, TariffTax myTariffTax) {
+//        this.minRegularUnits = minReg;
+//        this.minPeakUnits = minPeak;
+//        this.isPeak = isPeak;
+//        this.myTariffTax = myTariffTax;
+//        init();
+//    }
+
+    public BillEstimator(Customer myCustomer) {
+        this.myCustomer = myCustomer;
+        this.minRegularUnits = myCustomer.getRegularUnitsConsumed();
+        this.minPeakUnits = myCustomer.getPeakUnitsConsumed();
+
+        ArrayList<TariffTax> tariffTaxes = MasterPersistence.getInstance().getTariffTaxes();
+        this.myTariffTax = TariffTax.getTariffTax(tariffTaxes, myCustomer);
+
+        this.isPeak = myTariffTax.getPeakHourUnitPrice() != null;
         init();
     }
 
@@ -85,8 +102,8 @@ public class BillEstimator extends JFrame {
     }
 
     private void updateTotal() {
-        Double currentRegularUnits = (Double) spinRegularUnits.getValue();
-        Double currentPeakUnits = (Double) spinPeakUnits.getValue();
+        double currentRegularUnits = (double) spinRegularUnits.getValue() - myCustomer.getRegularUnitsConsumed();
+        Double currentPeakUnits = (Double) spinPeakUnits.getValue() - myCustomer.getPeakUnitsConsumed();
 
         Double costOfElectricity = (Double) (currentRegularUnits * myTariffTax.getRegularUnitPrice()) + (Double) ((myTariffTax.getPeakHourUnitPrice() != null) ? (currentPeakUnits * myTariffTax.getPeakHourUnitPrice()) : 0.0);
         Double salesTaxAmount = (Double) (costOfElectricity * (myTariffTax.getTaxPercentage() / 100));

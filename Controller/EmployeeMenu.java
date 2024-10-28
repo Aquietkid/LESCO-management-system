@@ -32,7 +32,7 @@ public class EmployeeMenu extends Menu {
         this.myEmployee = employee;
     }
 
-    public static int addBillingRecord(String customerID, String billingMonth, float currentMeterReadingRegular, float currentMeterReadingPeak, String readingEntryDate, String dueDate) {
+    public int addBillingRecord(String customerID, String billingMonth, float currentMeterReadingRegular, float currentMeterReadingPeak, String readingEntryDate, String dueDate) {
         Customer myCustomer;
         if ((myCustomer = isValidCustomerID(customerID)) != null) {
             return INVALID_CUSTOMER_ID;
@@ -702,6 +702,52 @@ public class EmployeeMenu extends Menu {
                 }
             }
         }
+    }
+
+    public double calculateCostOfElectricity(double regularReading, double peakReading, TariffTax myTariffTax) {
+        double regularRate = myTariffTax.getRegularUnitPrice();
+        double peakRate = (myTariffTax.getPeakHourUnitPrice() != null) ? myTariffTax.getPeakHourUnitPrice() : 0.0;
+        return (regularReading * regularRate) + (peakReading * peakRate);
+    }
+
+    public double calculateSalesTax(double costOfElectricity, TariffTax myTariffTax) {
+        return costOfElectricity * myTariffTax.getTaxPercentage();
+    }
+
+    public TariffTax getTariffTax(Customer myCustomer) {
+        return TariffTax.getTariffTax(MasterPersistence.getInstance().getTariffTaxes(), myCustomer);
+    }
+
+    public Customer getCustomerFromID(String customerID) {
+        ArrayList<Customer> customers = MasterPersistence.getInstance().getCustomers();
+        for (Customer customer : customers) {
+            if (customer.getCustomerID().equals(customerID)) {
+                return customer;
+            }
+        }
+        return null;
+    }
+
+    public int getMaxCustomerID() {
+        ArrayList<Customer> customers = MasterPersistence.getInstance().getCustomers();
+        int maxID = Integer.parseInt(customers.getFirst().getCustomerID());
+        for (Customer customer : customers) {
+            if (Integer.parseInt(customer.getCustomerID()) > maxID) {
+                maxID = Integer.parseInt(customer.getCustomerID());
+            }
+        }
+        return maxID;
+    }
+
+    public int getMinCustomerID() {
+        ArrayList<Customer> customers = MasterPersistence.getInstance().getCustomers();
+        int minID = Integer.parseInt(customers.getFirst().getCustomerID());
+        for (Customer customer : customers) {
+            if (Integer.parseInt(customer.getCustomerID()) < minID) {
+                minID = Integer.parseInt(customer.getCustomerID());
+            }
+        }
+        return minID;
     }
 
 }

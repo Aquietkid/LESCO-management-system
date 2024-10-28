@@ -7,6 +7,8 @@ import Model.MasterPersistence;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -35,6 +37,7 @@ public class LoginScreen {
         initUsernameLabel();
         initPasswordLabel();
         initFrame1();
+        addEnterKeyListener();
     }
 
     private void initFrame1() {
@@ -55,7 +58,7 @@ public class LoginScreen {
         frame1.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
-                //Initial file-reading
+                // Initial file-reading
                 super.windowOpened(e);
                 MasterPersistence.getInstance();
             }
@@ -87,28 +90,39 @@ public class LoginScreen {
     private void initLoginButton() {
         loginButton.setBounds(100, 110, 100, 30);
         loginButton.setText("Login");
-        loginButton.addActionListener(e -> {
-            String username = usernameTextField.getText();
-            String password = String.valueOf(passwordTextField.getPassword());
-            Controller.UserWrapper myUser = new Controller.UserWrapper();
-            int loginStatus = myUser.getLoginStatus(username, password);
-
-            if (loginStatus == LoginMenu.CUSTOMER_ID) {
-//                View.CustomerMenu customerMenuView = new View.CustomerMenu(new CustomerMenu(myUser.getMyUser()));
-                CustomerMenu customerMenu = new CustomerMenu(myUser.getMyUser());
-                frame1.dispose();
-                customerMenu.runMenuGUI();
-
-            } else if (loginStatus == LoginMenu.EMPLOYEE_ID) {
-                EmployeeMenuScreen employeeMenuScreen = new EmployeeMenuScreen(myUser.getMyUser());
-                frame1.dispose();
-            } else {
-                JOptionPane.showMessageDialog(frame1, "Invalid login credentials! Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
-                passwordTextField.setText("");
-            }
-
-
-        });
+        loginButton.addActionListener(e -> performLogin());
     }
 
+    private void addEnterKeyListener() {
+        KeyAdapter enterKeyListener = new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    performLogin();
+                }
+            }
+        };
+
+        usernameTextField.addKeyListener(enterKeyListener);
+        passwordTextField.addKeyListener(enterKeyListener);
+    }
+
+    private void performLogin() {
+        String username = usernameTextField.getText();
+        String password = String.valueOf(passwordTextField.getPassword());
+        Controller.UserWrapper myUser = new Controller.UserWrapper();
+        int loginStatus = myUser.getLoginStatus(username, password);
+
+        if (loginStatus == LoginMenu.CUSTOMER_ID) {
+            CustomerMenu customerMenu = new CustomerMenu(myUser.getMyUser());
+            frame1.dispose();
+            customerMenu.runMenuGUI();
+        } else if (loginStatus == LoginMenu.EMPLOYEE_ID) {
+            EmployeeMenuScreen employeeMenuScreen = new EmployeeMenuScreen(myUser.getMyUser());
+            frame1.dispose();
+        } else {
+            JOptionPane.showMessageDialog(frame1, "Invalid login credentials! Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+            passwordTextField.setText("");
+        }
+    }
 }

@@ -1,6 +1,5 @@
 package View;
 
-import Model.Customer;
 import Model.MasterPersistence;
 import Model.TariffTax;
 
@@ -38,19 +37,7 @@ public class TariffTaxView extends JFrame {
 
         btnExit.addActionListener(e -> dispose());
 
-        ArrayList<TariffTax> tariffTaxes = MasterPersistence.getInstance().getTariffTaxes();
-
-        for (TariffTax tariff : tariffTaxes) {
-            Object[] rowData = {
-                    tariff.getMeterType(),
-                    tariff.getCustomerType(),
-                    tariff.getRegularUnitPrice(),
-                    tariff.getPeakHourUnitPrice() != null ? tariff.getPeakHourUnitPrice() : "N/A",
-                    tariff.getTaxPercentage(),
-                    tariff.getFixedCharges()
-            };
-            tableModel.addRow(rowData);
-        }
+        ArrayList<TariffTax> tariffTaxes = loadTableData();
 
         JScrollPane scrollPane = new JScrollPane(tariffTable);
         panel.add(scrollPane, BorderLayout.CENTER);
@@ -68,7 +55,7 @@ public class TariffTaxView extends JFrame {
                 String value = (String) tableModel.getValueAt(row, col);
                 TariffTax tariffTax = tariffTaxes.get(row);
 
-                if (JOptionPane.showConfirmDialog(this, "Are you sure you want to update tariff & tax details? ") == JOptionPane.YES_NO_OPTION) {
+                if (JOptionPane.showConfirmDialog(this, "Are you sure you want to update tariff & tax details? ") == JOptionPane.YES_OPTION) {
                     switch (col) {
                         case 2 -> tariffTax.setRegularUnitPrice(Double.parseDouble(value));
                         case 3 -> tariffTax.setPeakHourUnitPrice(Double.parseDouble(value));
@@ -80,5 +67,22 @@ public class TariffTaxView extends JFrame {
             }
 
         });
+    }
+
+    private ArrayList<TariffTax> loadTableData() {
+        ArrayList<TariffTax> tariffTaxes = MasterPersistence.getInstance().getTariffTaxes();
+
+        for (TariffTax tariff : tariffTaxes) {
+            Object[] rowData = {
+                    tariff.getMeterType(),
+                    tariff.getCustomerType(),
+                    tariff.getRegularUnitPrice(),
+                    tariff.getPeakHourUnitPrice() != null ? tariff.getPeakHourUnitPrice() : "N/A",
+                    tariff.getTaxPercentage(),
+                    tariff.getFixedCharges()
+            };
+            tableModel.addRow(rowData);
+        }
+        return tariffTaxes;
     }
 }

@@ -1,5 +1,6 @@
 package View;
 
+import Controller.EmployeeMenu;
 import Model.BillingRecord;
 import Model.Customer;
 import Model.MasterPersistence;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class AddBillingRecordScreen extends JFrame {
+    private final EmployeeMenu employeeMenu;
     private JSpinner spnCustomerID;
     private JSpinner spnRegularReading;
     private JSpinner spnPeakReading;
@@ -21,7 +23,15 @@ public class AddBillingRecordScreen extends JFrame {
     private boolean isSubmitted = false;
     private BillingRecord newBillingRecord;
 
-    public AddBillingRecordScreen() {
+    private JLabel lblCostOfElectricity;
+    private JLabel lblSalesTax;
+    private JLabel lblFixedCharges;
+    private JLabel lblTotalBillingAmount;
+
+    private Customer myCustomer;
+
+    public AddBillingRecordScreen(EmployeeMenu employeeMenu) {
+        this.employeeMenu = employeeMenu;
         init();
     }
 
@@ -30,15 +40,40 @@ public class AddBillingRecordScreen extends JFrame {
         setSize(500, 400);
         setLocationRelativeTo(null);
 
-        spnCustomerID = new JSpinner(new SpinnerNumberModel(1000, 1000, 9999, 1)); // Assuming 4-digit customer IDs
+        spnCustomerID = new JSpinner(new SpinnerNumberModel(employeeMenu.getMinCustomerID(), employeeMenu.getMinCustomerID(), employeeMenu.getMaxCustomerID(), 1)); // Assuming 4-digit customer IDs
+        myCustomer = employeeMenu.getCustomerFromID(spnCustomerID.getValue().toString());
 
         SpinnerDateModel billingMonthModel = new SpinnerDateModel();
         spnBillingMonth = new JSpinner(billingMonthModel);
         JSpinner.DateEditor monthEditor = new JSpinner.DateEditor(spnBillingMonth, "MM/yyyy");
         spnBillingMonth.setEditor(monthEditor);
 
-        spnRegularReading = new JSpinner(new SpinnerNumberModel(0.0f, 0.0f, 10000.0f, 0.1f));
-        spnPeakReading = new JSpinner(new SpinnerNumberModel(0.0f, 0.0f, 10000.0f, 0.1f));
+        spnCustomerID.addChangeListener(e -> {
+            myCustomer = employeeMenu.getCustomerFromID(spnCustomerID.getValue().toString());
+            System.out.println(myCustomer);
+            if (myCustomer != null) {
+                spnRegularReading.setModel(new SpinnerNumberModel(myCustomer.getRegularUnitsConsumed(), myCustomer.getRegularUnitsConsumed(), 999999.9, 0.1));
+                if (!myCustomer.getThreePhase()) {
+                    spnPeakReading.setEnabled(false);
+                } else {
+                    spnPeakReading.setEnabled(true);
+                    spnPeakReading.setModel(new SpinnerNumberModel(myCustomer.getPeakUnitsConsumed(), myCustomer.getPeakUnitsConsumed(), 999999.9, 0.1));
+                }
+            } else {
+                spnRegularReading.setModel(new SpinnerNumberModel(0.0, 0.0, 999999.9, 0.1));
+                spnPeakReading.setModel(new SpinnerNumberModel(0.0, 0.0, 999999.9, 0.1));
+            }
+            updateCostLabels();
+        });
+
+        spnRegularReading = new JSpinner(new SpinnerNumberModel(myCustomer.getRegularUnitsConsumed(), myCustomer.getRegularUnitsConsumed(), 999999.9, 0.1));
+        spnPeakReading = new JSpinner(new SpinnerNumberModel(myCustomer.getPeakUnitsConsumed(), myCustomer.getPeakUnitsConsumed(), 999999.9, 0.1));
+        if(!myCustomer.getThreePhase()) {
+            spnPeakReading.setEnabled(false);
+        }
+
+        spnRegularReading.addChangeListener(e -> updateCostLabels());
+        spnPeakReading.addChangeListener(e -> updateCostLabels());
 
         spnReadingEntryDate = new JSpinner(new SpinnerDateModel());
         spnReadingEntryDate.setValue(Calendar.getInstance().getTime()); // Default to today
@@ -50,10 +85,12 @@ public class AddBillingRecordScreen extends JFrame {
         JSpinner.DateEditor dueDateEditor = new JSpinner.DateEditor(spnDueDate, "yyyy-MM-dd");
         spnDueDate.setEditor(dueDateEditor);
 
-        JLabel lblCostOfElectricity = new JLabel("Auto-calculated");
-        JLabel lblSalesTax = new JLabel("Auto-calculated");
-        JLabel lblFixedCharges = new JLabel("Auto-calculated");
-        JLabel lblTotalBillingAmount = new JLabel("Auto-calculated");
+        lblCostOfElectricity = new JLabel();
+        lblSalesTax = new JLabel();
+        lblFixedCharges = new JLabel();
+        lblTotalBillingAmount = new JLabel();
+
+        updateCostLabels();
 
         JPanel panel = new JPanel(new GridLayout(0, 2, 10, 10));
 
@@ -86,7 +123,7 @@ public class AddBillingRecordScreen extends JFrame {
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(panel);
 
-        btnAdd.addActionListener(e -> onSubmit());
+        btnAdd.addActionListener(e -> onSubmit(myCustomer));
 
         btnCancel.addActionListener(e -> dispose());
         ImageIcon logo = new ImageIcon("Assets/lesco-pk-logo.png");
@@ -94,10 +131,27 @@ public class AddBillingRecordScreen extends JFrame {
         setVisible(true);
     }
 
-    private void onSubmit() {
+    private void updateCostLabels() {
+        System.out.println(myCustomer);
+        if (spnPeakReading.isEnabled())
+            lblCostOfElectricity.setText(String.valueOf(employeeMenu.calculateCostOfElectricity(((double) spnRegularReading.getValue() - myCustomer.getRegularUnitsConsumed()), ((double) spnPeakReading.getValue() - myCustomer.getPeakUnitsConsumed()), employeeMenu.getTariffTax(myCustomer))));
+        else
+            lblCostOfElectricity.setText(String.valueOf(employeeMenu.calculateCostOfElectricity(((double) spnRegularReading.getValue() - myCustomer.getRegularUnitsConsumed()), 0.0, employeeMenu.getTariffTax(myCustomer))));
+        lblSalesTax.setText(String.valueOf(employeeMenu.calculateSalesTax(Double.parseDouble(lblCostOfElectricity.getText()), employeeMenu.getTariffTax(myCustomer))));
+        lblFixedCharges.setText(String.valueOf(employeeMenu.getTariffTax(myCustomer).getFixedCharges()));
+        lblTotalBillingAmount.setText(String.valueOf(
+                Double.parseDouble(lblCostOfElectricity.getText()) +
+                        Double.parseDouble(lblFixedCharges.getText()) +
+                        Double.parseDouble(lblSalesTax.getText())
+        ));
+    }
+
+    private void onSubmit(Customer myCustomer) {
         try {
-            String customerID = spnCustomerID.getValue().toString();
-            Customer myCustomer = getMyCustomer(customerID);
+            if (myCustomer == null) {
+                JOptionPane.showMessageDialog(this, "The customer ID does not exist!", "Error!", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
             SimpleDateFormat monthFormat = new SimpleDateFormat("MM/yyyy");
             String billingMonth = monthFormat.format(spnBillingMonth.getValue());
@@ -110,15 +164,25 @@ public class AddBillingRecordScreen extends JFrame {
 
             String dueDate = dateFormat.format(spnDueDate.getValue());
 
-            TariffTax myTariffTax = getTariffTax(myCustomer);
+            TariffTax myTariffTax = employeeMenu.getTariffTax(myCustomer);
 
-            float costOfElectricity = (float) calculateCostOfElectricity(regularReading, peakReading, myTariffTax);
-            float salesTaxAmount = (float) calculateSalesTax(costOfElectricity, myTariffTax);
+            float costOfElectricity = (float) employeeMenu.calculateCostOfElectricity(regularReading, peakReading, myTariffTax);
+            float salesTaxAmount = (float) employeeMenu.calculateSalesTax(costOfElectricity, myTariffTax);
             float fixedCharges = (float) myTariffTax.getFixedCharges();
             float totalBillingAmount = costOfElectricity + salesTaxAmount + fixedCharges;
 
-            newBillingRecord = new BillingRecord(customerID, billingMonth, regularReading, peakReading, readingEntryDate, costOfElectricity, salesTaxAmount, fixedCharges, totalBillingAmount, dueDate);
+            newBillingRecord = new BillingRecord(myCustomer.getCustomerID(), billingMonth, regularReading, peakReading, readingEntryDate, costOfElectricity, salesTaxAmount, fixedCharges, totalBillingAmount, dueDate);
 
+            ArrayList<BillingRecord> billingRecords = MasterPersistence.getInstance().getBillingRecords();
+            for(BillingRecord billingRecord: billingRecords) {
+                if(billingRecord.getBillingMonth().equals(billingMonth) && billingRecord.getCustomerID().equals(myCustomer.getCustomerID())) {
+                    JOptionPane.showMessageDialog(this, "The bill for this month is already added!", "Error!", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+
+            billingRecords.add(newBillingRecord);
+            MasterPersistence.getInstance().setBillingRecordsUpdated();
             JOptionPane.showMessageDialog(this, "Billing Record added!");
 
             isSubmitted = true;
@@ -127,30 +191,6 @@ public class AddBillingRecordScreen extends JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    private double calculateCostOfElectricity(double regularReading, double peakReading, TariffTax myTariffTax) {
-        double regularRate = myTariffTax.getRegularUnitPrice();
-        double peakRate = myTariffTax.getPeakHourUnitPrice();
-        return (regularReading * regularRate) + (peakReading * peakRate);
-    }
-
-    private double calculateSalesTax(double costOfElectricity, TariffTax myTariffTax) {
-        return costOfElectricity * myTariffTax.getTaxPercentage();
-    }
-
-    private TariffTax getTariffTax(Customer myCustomer) {
-        return TariffTax.getTariffTax(MasterPersistence.getInstance().getTariffTaxes(), myCustomer);
-    }
-
-    private Customer getMyCustomer(String customerID) {
-        ArrayList<Customer> customers = MasterPersistence.getInstance().getCustomers();
-        for (Customer customer : customers) {
-            if (customer.getCustomerID().equals(customerID)) {
-                return customer;
-            }
-        }
-        return null;
     }
 
     public boolean isSubmitted() {
