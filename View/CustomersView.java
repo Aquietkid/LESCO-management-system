@@ -116,10 +116,7 @@ public class CustomersView extends JFrame {
         btnAdd.addActionListener(e -> addCustomer());
         btnDelete.addActionListener(e -> removeCustomer());
         btnBack.addActionListener(e -> dispose());
-
-        table.getSelectionModel().addListSelectionListener(e -> {
-            btnDelete.setEnabled(!table.getSelectionModel().isSelectionEmpty());
-        });
+        table.getSelectionModel().addListSelectionListener(e -> btnDelete.setEnabled(!table.getSelectionModel().isSelectionEmpty()));
 
         add(panelTop, BorderLayout.NORTH);
         add(panelButtons, BorderLayout.SOUTH);
@@ -132,10 +129,14 @@ public class CustomersView extends JFrame {
     }
 
     private void addCustomer() {
-        employeeMenu.addCustomer(this);
+        Customer addedCustomer = employeeMenu.addCustomer(this);
+        // TODO: fix added customer not showing in table automatically after addition
+        if (addedCustomer != null)
+            model.addRow(new Object[]{addedCustomer.getCustomerID(), addedCustomer.getCustomerName(), addedCustomer.getAddress(), addedCustomer.getPhone(), addedCustomer.getIsCommercial(), addedCustomer.getThreePhase(), addedCustomer.getRegularUnitsConsumed(), addedCustomer.getPeakUnitsConsumed(), addedCustomer.getConnectionDate()});
         repaint();
         revalidate();
     }
+
 
     private void loadCustomerData() {
         for (Customer customer : customers) {

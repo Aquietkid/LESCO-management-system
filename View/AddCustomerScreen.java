@@ -107,6 +107,7 @@ public class AddCustomerScreen extends JFrame {
                 if (CNICcount >= 3) {
                     JOptionPane.showMessageDialog(this, "More than 3 meters can not be added for one CNIC! Aborting addition...", "Error", JOptionPane.ERROR_MESSAGE);
                     dispose();
+                    return;
                 }
             }
 
@@ -121,7 +122,7 @@ public class AddCustomerScreen extends JFrame {
             float regularUnits = 0.0f;
             float peakUnits = 0.0f;
 
-            String connectionDate = String.format("%02d, %02d, %04d", java.time.LocalDate.now().getDayOfMonth(), java.time.LocalDate.now().getMonthValue(), java.time.LocalDate.now().getYear()); // Autofilled with today's date
+            String connectionDate = String.format("%02d-%02d-%04d", java.time.LocalDate.now().getDayOfMonth(), java.time.LocalDate.now().getMonthValue(), java.time.LocalDate.now().getYear()); // Autofilled with today's date
 
             newCustomer = new Customer(maxID, CNIC, customerName, address, phone, isCommercial, isThreePhase, connectionDate, regularUnits, peakUnits);
             MasterPersistence.getInstance().getCustomers().add(newCustomer);

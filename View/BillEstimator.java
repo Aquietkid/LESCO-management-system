@@ -25,14 +25,6 @@ public class BillEstimator extends JFrame {
 
     private final Customer myCustomer;
 
-//    public BillEstimator(double minReg, double minPeak, boolean isPeak, TariffTax myTariffTax) {
-//        this.minRegularUnits = minReg;
-//        this.minPeakUnits = minPeak;
-//        this.isPeak = isPeak;
-//        this.myTariffTax = myTariffTax;
-//        init();
-//    }
-
     public BillEstimator(Customer myCustomer) {
         this.myCustomer = myCustomer;
         this.minRegularUnits = myCustomer.getRegularUnitsConsumed();

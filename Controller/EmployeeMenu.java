@@ -612,7 +612,7 @@ public class EmployeeMenu extends Menu {
         System.out.println("Tariff details updated!\n");
     }
 
-    public void addCustomer(JFrame parent) {
+    public Customer addCustomer(JFrame parent) {
         ArrayList<Customer> customers = MasterPersistence.getInstance().getCustomers();
         AddCustomerScreen addCustomerScreen = new AddCustomerScreen(parent);
         if (addCustomerScreen.isSubmitted()) {
@@ -620,10 +620,12 @@ public class EmployeeMenu extends Menu {
             if (!customers.contains(customer)) {
                 customers.add(customer);
                 MasterPersistence.getInstance().setCustomersUpdated();
+                return customer;
             } else {
                 JOptionPane.showMessageDialog(parent, "Customer ID already exists!");
             }
         }
+        return null;
     }
 
     public void updateCustomerInfo(ArrayList<Customer> customers) {

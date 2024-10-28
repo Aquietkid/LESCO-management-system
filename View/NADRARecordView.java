@@ -4,14 +4,20 @@ import Model.MasterPersistence;
 import Model.NADRARecord;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class NADRARecordView extends JFrame {
     private DefaultTableModel tableModel;
-
-    Controller.EmployeeMenu employeeMenu;
+    private ArrayList<NADRARecord> originalData;
+    private JTextField searchField;
+    private Controller.EmployeeMenu employeeMenu;
 
     public NADRARecordView(Controller.EmployeeMenu employeeMenu) {
         this.employeeMenu = employeeMenu;
@@ -24,44 +30,53 @@ public class NADRARecordView extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        String[] columnNames = {"CNIC", "Issuance Date", "Expiry Date"};
+        JPanel panelMain = new JPanel(new BorderLayout(20, 20));
+        panelMain.setBorder(new EmptyBorder(10, 10, 10, 10));
 
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        searchField = new JTextField();
+        searchField.setBorder(BorderFactory.createTitledBorder("Search"));
+        searchPanel.add(searchField, BorderLayout.CENTER);
+
+        String[] columnNames = {"CNIC", "Issuance Date", "Expiry Date"};
         tableModel = new DefaultTableModel(columnNames, 0);
         JTable nadraTable = new JTable(tableModel);
+        nadraTable.setDefaultRenderer(Object.class, new HighlightRenderer());
         nadraTable.setFillsViewportHeight(true);
 
-        ArrayList<NADRARecord> nadraRecords = MasterPersistence.getInstance().getNadraRecords();
+        originalData = MasterPersistence.getInstance().getNadraRecords();
+        loadTableData(originalData);
 
-        for (NADRARecord record : nadraRecords) {
-            Object[] rowData = {
-                    record.getCNIC(),
-                    record.getIssuanceDate(),
-                    record.getExpiryDate()
-            };
-            tableModel.addRow(rowData);
-        }
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                applyFilter(searchField.getText().toLowerCase());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                applyFilter(searchField.getText().toLowerCase());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                applyFilter(searchField.getText().toLowerCase());
+            }
+        });
 
         tableModel.addTableModelListener(e -> {
             int row = e.getFirstRow();
             int col = e.getColumn();
             if (row >= 0 && col >= 0) {
                 String value = (String) tableModel.getValueAt(row, col);
-                NADRARecord nadraRecord = nadraRecords.get(row);
-                if(row == 0 || row == 1) {
-                    return;
-                }
+                NADRARecord nadraRecord = originalData.get(row);
+                if (col == 1 || col == 2) return;
 
                 if (JOptionPane.showConfirmDialog(this, "Are you sure you want to update NADRA details? ") == JOptionPane.YES_OPTION) {
-                    switch (col) {
-                        case 1, 2 -> {
-                            return;
-                        }
-                        case 3 -> nadraRecord.setExpiryDate(value);
-                    }
+                    if (col == 2) nadraRecord.setExpiryDate(value);
                     MasterPersistence.getInstance().setNadraRecordsUpdated();
                 }
             }
-
         });
 
         JButton btnCNICReports = new JButton("CNIC Reports");
@@ -69,10 +84,56 @@ public class NADRARecordView extends JFrame {
             JOptionPane.showMessageDialog(this, employeeMenu.viewCNICCustomers());
         });
 
+        JButton btnExit = new JButton("Exit");
+        btnExit.addActionListener(e -> dispose());
+
+        JPanel panelButtons = new JPanel(new BorderLayout(20, 20));
+
         JScrollPane scrollPane = new JScrollPane(nadraTable);
-        add(scrollPane, BorderLayout.CENTER);
-        add(btnCNICReports, BorderLayout.SOUTH);
+
+        panelMain.add(searchPanel, BorderLayout.NORTH);
+        panelMain.add(scrollPane, BorderLayout.CENTER);
+        panelButtons.add(btnCNICReports, BorderLayout.EAST);
+        panelButtons.add(btnExit, BorderLayout.WEST);
+        panelMain.add(panelButtons, BorderLayout.SOUTH);
+        add(panelMain, BorderLayout.CENTER);
         setVisible(true);
     }
 
+    private void loadTableData(ArrayList<NADRARecord> records) {
+        tableModel.setRowCount(0);
+        for (NADRARecord record : records) {
+            Object[] rowData = {record.getCNIC(), record.getIssuanceDate(), record.getExpiryDate()};
+            tableModel.addRow(rowData);
+        }
+    }
+
+    private void applyFilter(String query) {
+        ArrayList<NADRARecord> filteredList = (ArrayList<NADRARecord>) originalData.stream()
+                .filter(record -> record.getCNIC().toLowerCase().contains(query)
+                        || record.getIssuanceDate().toLowerCase().contains(query)
+                        || record.getExpiryDate().toLowerCase().contains(query))
+                .collect(Collectors.toList());
+        loadTableData(filteredList);
+        repaint();
+    }
+
+    private class HighlightRenderer extends DefaultTableCellRenderer {
+        @Override
+        protected void setValue(Object value) {
+            String text = value == null ? "" : value.toString();
+            String query = searchField.getText().toLowerCase();
+
+            if (!query.isEmpty() && text.toLowerCase().contains(query)) {
+                int start = text.toLowerCase().indexOf(query);
+                int end = start + query.length();
+                StringBuilder highlightedText = new StringBuilder("<html>" + text.substring(0, start) +
+                        "<span style='background-color: yellow;'>" + text.substring(start, end) + "</span>" +
+                        text.substring(end) + "</html>");
+                setText(highlightedText.toString());
+            } else {
+                setText(text);
+            }
+        }
+    }
 }
