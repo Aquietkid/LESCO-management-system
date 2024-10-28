@@ -50,7 +50,6 @@ public class AddBillingRecordScreen extends JFrame {
 
         spnCustomerID.addChangeListener(e -> {
             myCustomer = employeeMenu.getCustomerFromID(spnCustomerID.getValue().toString());
-            System.out.println(myCustomer);
             if (myCustomer != null) {
                 spnRegularReading.setModel(new SpinnerNumberModel(myCustomer.getRegularUnitsConsumed(), myCustomer.getRegularUnitsConsumed(), 999999.9, 0.1));
                 if (!myCustomer.getThreePhase()) {
@@ -68,7 +67,7 @@ public class AddBillingRecordScreen extends JFrame {
 
         spnRegularReading = new JSpinner(new SpinnerNumberModel(myCustomer.getRegularUnitsConsumed(), myCustomer.getRegularUnitsConsumed(), 999999.9, 0.1));
         spnPeakReading = new JSpinner(new SpinnerNumberModel(myCustomer.getPeakUnitsConsumed(), myCustomer.getPeakUnitsConsumed(), 999999.9, 0.1));
-        if(!myCustomer.getThreePhase()) {
+        if (!myCustomer.getThreePhase()) {
             spnPeakReading.setEnabled(false);
         }
 
@@ -76,7 +75,7 @@ public class AddBillingRecordScreen extends JFrame {
         spnPeakReading.addChangeListener(e -> updateCostLabels());
 
         spnReadingEntryDate = new JSpinner(new SpinnerDateModel());
-        spnReadingEntryDate.setValue(Calendar.getInstance().getTime()); // Default to today
+        spnReadingEntryDate.setValue(Calendar.getInstance().getTime());
         JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spnReadingEntryDate, "yyyy-MM-dd");
         spnReadingEntryDate.setEditor(dateEditor);
         spnReadingEntryDate.setEnabled(false);
@@ -96,7 +95,7 @@ public class AddBillingRecordScreen extends JFrame {
 
         panel.add(new JLabel("Customer ID:"));
         panel.add(spnCustomerID);
-        panel.add(new JLabel("Billing Month (MM/YYYY):"));
+        panel.add(new JLabel("Billing Month (MM-YYYY):"));
         panel.add(spnBillingMonth);
         panel.add(new JLabel("Regular Meter Reading:"));
         panel.add(spnRegularReading);
@@ -132,8 +131,7 @@ public class AddBillingRecordScreen extends JFrame {
     }
 
     private void updateCostLabels() {
-        System.out.println(myCustomer);
-        if (spnPeakReading.isEnabled())
+        if (myCustomer.getThreePhase())
             lblCostOfElectricity.setText(String.valueOf(employeeMenu.calculateCostOfElectricity(((double) spnRegularReading.getValue() - myCustomer.getRegularUnitsConsumed()), ((double) spnPeakReading.getValue() - myCustomer.getPeakUnitsConsumed()), employeeMenu.getTariffTax(myCustomer))));
         else
             lblCostOfElectricity.setText(String.valueOf(employeeMenu.calculateCostOfElectricity(((double) spnRegularReading.getValue() - myCustomer.getRegularUnitsConsumed()), 0.0, employeeMenu.getTariffTax(myCustomer))));
@@ -153,7 +151,7 @@ public class AddBillingRecordScreen extends JFrame {
                 return;
             }
 
-            SimpleDateFormat monthFormat = new SimpleDateFormat("MM/yyyy");
+            SimpleDateFormat monthFormat = new SimpleDateFormat("MM-yyyy");
             String billingMonth = monthFormat.format(spnBillingMonth.getValue());
 
             float regularReading = ((Number) spnRegularReading.getValue()).floatValue();
@@ -174,8 +172,8 @@ public class AddBillingRecordScreen extends JFrame {
             newBillingRecord = new BillingRecord(myCustomer.getCustomerID(), billingMonth, regularReading, peakReading, readingEntryDate, costOfElectricity, salesTaxAmount, fixedCharges, totalBillingAmount, dueDate);
 
             ArrayList<BillingRecord> billingRecords = MasterPersistence.getInstance().getBillingRecords();
-            for(BillingRecord billingRecord: billingRecords) {
-                if(billingRecord.getBillingMonth().equals(billingMonth) && billingRecord.getCustomerID().equals(myCustomer.getCustomerID())) {
+            for (BillingRecord billingRecord : billingRecords) {
+                if (billingRecord.getBillingMonth().equals(billingMonth) && billingRecord.getCustomerID().equals(myCustomer.getCustomerID())) {
                     JOptionPane.showMessageDialog(this, "The bill for this month is already added!", "Error!", JOptionPane.ERROR_MESSAGE);
                     return;
                 }

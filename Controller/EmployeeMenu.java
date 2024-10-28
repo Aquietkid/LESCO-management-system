@@ -713,7 +713,7 @@ public class EmployeeMenu extends Menu {
     }
 
     public double calculateSalesTax(double costOfElectricity, TariffTax myTariffTax) {
-        return costOfElectricity * myTariffTax.getTaxPercentage();
+        return costOfElectricity * myTariffTax.getTaxPercentage() / 100;
     }
 
     public TariffTax getTariffTax(Customer myCustomer) {
