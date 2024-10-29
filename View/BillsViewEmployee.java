@@ -114,40 +114,42 @@ public class BillsViewEmployee extends JFrame {
 
     private void addBill() {
         AddBillingRecordScreen addBillingRecordScreen = new AddBillingRecordScreen(employeeMenu);
-        if (addBillingRecordScreen.isSubmitted()) {
-            BillingRecord br = addBillingRecordScreen.getNewBillingRecord();
+        System.out.println("Screen created!");
 
-            if (isMostRecentBill(br, billingRecords)) {
-                // Add new record to the table model
-                model.addRow(new Object[]{br.getCustomerID(), br.getBillingMonth(), br.getCurrentMeterReadingRegular(), br.getCurrentMeterReadingPeak(), br.getReadingEntryDate(), br.getCostOfElectricity(), br.getSalesTaxAmount(), br.getFixedCharges(), br.getTotalBillingAmount(), br.getDueDate(), br.getBillPaidStatus(), br.getBillPaymentDate()});
+        // Add a window listener to detect when the screen is closed
+        addBillingRecordScreen.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                if (addBillingRecordScreen.isSubmitted()) {
+                    BillingRecord br = addBillingRecordScreen.getNewBillingRecord();
 
-                ArrayList<Customer> customers = MasterPersistence.getInstance().getCustomers();
-                int i = 0;
-                for (Customer customer : customers) {
-                    if (customer.getCustomerID().equals(br.getCustomerID())) {
-                        break;
+                    if (isMostRecentBill(br, billingRecords)) {
+                        model.addRow(new Object[]{br.getCustomerID(), br.getBillingMonth(), br.getCurrentMeterReadingRegular(), br.getCurrentMeterReadingPeak(), br.getReadingEntryDate(), br.getCostOfElectricity(), br.getSalesTaxAmount(), br.getFixedCharges(), br.getTotalBillingAmount(), br.getDueDate(), br.getBillPaidStatus(), br.getBillPaymentDate()});
+
+                        ArrayList<Customer> customers = MasterPersistence.getInstance().getCustomers();
+                        for (Customer customer : customers) {
+                            if (customer.getCustomerID().equals(br.getCustomerID())) {
+                                customer.setRegularUnitsConsumed(br.getCurrentMeterReadingRegular());
+                                if (customer.getThreePhase()) {
+                                    customer.setPeakUnitsConsumed(br.getCurrentMeterReadingPeak());
+                                }
+                                MasterPersistence.getInstance().setCustomersUpdated();
+                                System.out.println(MasterPersistence.getInstance().getBillingRecords());
+                                System.out.println(MasterPersistence.getInstance().getCustomers());
+                                break;
+                            }
+                        }
+                        revalidate();
+                        repaint();
+                    } else {
+                        JOptionPane.showMessageDialog(addBillingRecordScreen, "Only the most recent month's bill can be added.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
+                } else {
+                    System.out.println("Screen was closed without submission.");
                 }
-                if (i < customers.size()) {
-                    customers.get(i).setRegularUnitsConsumed(br.getCurrentMeterReadingRegular());
-                    if (customers.get(i).getThreePhase()) {
-                        customers.get(i).setPeakUnitsConsumed(br.getCurrentMeterReadingPeak());
-                    }
-                    MasterPersistence.getInstance().setCustomersUpdated();
-                    System.out.println(MasterPersistence.getInstance().getBillingRecords());
-                    System.out.println(MasterPersistence.getInstance().getCustomers());
-                }
-                billingRecords.add(br);  // Add new billing record
-                MasterPersistence.getInstance().setBillingRecordsUpdated();
-
-
-                revalidate();
-                repaint();
-
-            } else {
-                JOptionPane.showMessageDialog(this, "Only the most recent month's bill can be added.", "Error", JOptionPane.ERROR_MESSAGE);
+                System.out.println("Done with the function!");
             }
-        }
+        });
     }
 
 

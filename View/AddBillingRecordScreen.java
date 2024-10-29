@@ -76,12 +76,12 @@ public class AddBillingRecordScreen extends JFrame {
 
         spnReadingEntryDate = new JSpinner(new SpinnerDateModel());
         spnReadingEntryDate.setValue(Calendar.getInstance().getTime());
-        JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spnReadingEntryDate, "yyyy-MM-dd");
+        JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spnReadingEntryDate, "dd-MM-yyyy");
         spnReadingEntryDate.setEditor(dateEditor);
         spnReadingEntryDate.setEnabled(false);
 
         spnDueDate = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor dueDateEditor = new JSpinner.DateEditor(spnDueDate, "yyyy-MM-dd");
+        JSpinner.DateEditor dueDateEditor = new JSpinner.DateEditor(spnDueDate, "dd-MM-yyyy");
         spnDueDate.setEditor(dueDateEditor);
 
         lblCostOfElectricity = new JLabel();
