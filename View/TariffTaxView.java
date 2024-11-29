@@ -41,7 +41,7 @@ public class TariffTaxView extends JFrame {
         JTable tariffTable = new JTable(tableModel);
         tariffTable.setDefaultRenderer(Object.class, new HighlightRenderer());
         panelButtons = new JPanel();
-        btnExit = new JButton("Exit");
+        btnExit = new JButton("Back");
         panelButtons.add(btnExit);
         tariffTable.setFillsViewportHeight(true);
         btnExit.addActionListener(e -> dispose());

@@ -84,7 +84,7 @@ public class NADRARecordView extends JFrame {
             JOptionPane.showMessageDialog(this, employeeMenu.viewCNICCustomers());
         });
 
-        JButton btnExit = new JButton("Exit");
+        JButton btnExit = new JButton("Back");
         btnExit.addActionListener(e -> dispose());
 
         JPanel panelButtons = new JPanel(new BorderLayout(20, 20));
