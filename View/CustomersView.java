@@ -1,6 +1,6 @@
 package View;
 
-import Controller.EmployeeMenu;
+import controller.EmployeeMenu;
 import Model.Customer;
 import Model.MasterPersistence;
 

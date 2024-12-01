@@ -23,10 +23,10 @@ public class BillsViewEmployee extends JFrame {
     JTextField txtSearch;
     ArrayList<BillingRecord> billingRecords;
 
-    Controller.EmployeeMenu employeeMenu;
+    controller.EmployeeMenu employeeMenu;
     String searchText = "";
 
-    public BillsViewEmployee(Controller.EmployeeMenu employeeMenu) {
+    public BillsViewEmployee(controller.EmployeeMenu employeeMenu) {
         this.employeeMenu = employeeMenu;
         init();
     }

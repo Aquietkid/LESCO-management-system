@@ -1,6 +1,6 @@
 package View;
 
-import Controller.EmployeeMenu;
+import controller.EmployeeMenu;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,9 +20,9 @@ public class PasswordChangeScreen extends JFrame {
 
     JPanel panel;
 
-    final Controller.EmployeeMenu employeeMenu;
+    final controller.EmployeeMenu employeeMenu;
 
-    PasswordChangeScreen(Controller.EmployeeMenu employeeMenu) {
+    PasswordChangeScreen(controller.EmployeeMenu employeeMenu) {
         this.employeeMenu = employeeMenu;
         init();
     }

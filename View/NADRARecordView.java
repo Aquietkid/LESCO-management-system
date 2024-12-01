@@ -17,9 +17,9 @@ public class NADRARecordView extends JFrame {
     private DefaultTableModel tableModel;
     private ArrayList<NADRARecord> originalData;
     private JTextField searchField;
-    private Controller.EmployeeMenu employeeMenu;
+    private controller.EmployeeMenu employeeMenu;
 
-    public NADRARecordView(Controller.EmployeeMenu employeeMenu) {
+    public NADRARecordView(controller.EmployeeMenu employeeMenu) {
         this.employeeMenu = employeeMenu;
         init();
     }

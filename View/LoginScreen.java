@@ -1,7 +1,7 @@
 package View;
 
-import Controller.CustomerMenu;
-import Controller.LoginMenu;
+import controller.CustomerMenu;
+import controller.LoginMenu;
 import Model.MasterPersistence;
 
 import javax.swing.*;
@@ -110,7 +110,7 @@ public class LoginScreen {
     private void performLogin() {
         String username = usernameTextField.getText();
         String password = String.valueOf(passwordTextField.getPassword());
-        Controller.UserWrapper myUser = new Controller.UserWrapper();
+        controller.UserWrapper myUser = new controller.UserWrapper();
         int loginStatus = myUser.getLoginStatus(username, password);
 
         if (loginStatus == LoginMenu.CUSTOMER_ID) {

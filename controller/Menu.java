@@ -1,4 +1,4 @@
-package Controller;
+package controller;
 
 public abstract class Menu {
     protected String message = "";

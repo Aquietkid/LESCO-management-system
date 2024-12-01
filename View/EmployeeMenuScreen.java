@@ -10,11 +10,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class EmployeeMenuScreen extends JFrame {
-    private final Controller.EmployeeMenu employeeMenu;
+    private final controller.EmployeeMenu employeeMenu;
 
     public EmployeeMenuScreen(User employee) {
         init();
-        this.employeeMenu = new Controller.EmployeeMenu(employee);
+        this.employeeMenu = new controller.EmployeeMenu(employee);
     }
 
     private void init() {

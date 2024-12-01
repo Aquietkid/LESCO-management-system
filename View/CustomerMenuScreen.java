@@ -6,9 +6,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class CustomerMenuScreen extends JFrame {
-    private final Controller.CustomerMenu customerMenu;
+    private final controller.CustomerMenu customerMenu;
 
-    public CustomerMenuScreen(Controller.CustomerMenu customerMenu) {
+    public CustomerMenuScreen(controller.CustomerMenu customerMenu) {
         this.customerMenu = customerMenu;
         createUIComponents();
     }
