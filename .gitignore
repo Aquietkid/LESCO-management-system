@@ -2,3 +2,6 @@
 LESCO-management-system.iml
 .idea
 /.idea/
+/.scannerwork/
+/sonar-project.properties
+/untitled/target/
