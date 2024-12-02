@@ -66,7 +66,7 @@ public class EmployeeMenu extends Menu {
         return message.toString();
     }
 
-    private LocalDate getExpiryDate(NADRARecord n) {
+    public LocalDate getExpiryDate(NADRARecord n) {
         String expiryDate = n.getExpiryDate().trim();
 
         int day = Integer.parseInt(expiryDate.substring(0, 2).trim());

@@ -6,6 +6,7 @@ import org.example.model.MasterPersistence;
 import org.example.model.NADRARecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -14,8 +15,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class EmployeeMenuTest {
 
@@ -70,14 +70,25 @@ class EmployeeMenuTest {
         masterPersistenceMock.close();
     }
 
+    @Order(2)
     @Test
     void testViewCNICCustomersWhenExists() {
         assertTrue(employeeMenu.viewCNICCustomers().contains(customer.getCustomerID()), "The customer with a CNIC expiring within a month was not found in the message.");
     }
 
+    @Order(3)
     @Test
     void testViewCNICCustomersWhenNotExists() {
         nadraRecord.setExpiryDate(LocalDate.now().plusDays(50).format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         assertFalse(employeeMenu.viewCNICCustomers().contains(customer.toString()));
+        nadraRecord.setExpiryDate(LocalDate.now().minusDays(50).format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+    }
+
+    @Order(1)
+    @Test
+    void testGetExpiryDate() {
+        assertEquals(nadraRecord.getExpiryDate(), employeeMenu.getExpiryDate(nadraRecord).format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        assertEquals(LocalDate.now().plusDays(15).format(DateTimeFormatter.ofPattern("dd-MM-yyyy")),
+                employeeMenu.getExpiryDate(nadraRecord).format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
     }
 }
