@@ -1,9 +1,9 @@
 package org.example.client.view;
 
-import org.example.server.controller.CustomerMenu;
-import org.example.server.controller.LoginMenu;
+import org.example.client.controller.CustomerMenu;
+import org.example.client.controller.LoginMenu;
+import org.example.client.controller.UserWrapper;
 import org.example.commons.model.MasterPersistence;
-import org.example.server.controller.UserWrapper;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;

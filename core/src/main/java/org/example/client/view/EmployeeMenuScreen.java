@@ -1,9 +1,8 @@
 package org.example.client.view;
 
+import org.example.client.controller.EmployeeMenu;
 import org.example.commons.model.MasterPersistence;
 import org.example.commons.model.User;
-import org.example.server.controller.EmployeeMenu;
-import org.example.server.view.LoginScreen;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

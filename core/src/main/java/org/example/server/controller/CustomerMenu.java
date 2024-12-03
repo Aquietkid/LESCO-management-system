@@ -25,7 +25,7 @@ public class CustomerMenu extends Menu {
     }
 
     public void runMenuGUI() {
-        new CustomerMenuScreen(this);
+        new CustomerMenuScreen(new org.example.client.controller.CustomerMenu(myCustomer));
     }
 
     public void executeMenuTask(int choice, JFrame customerMenu) {

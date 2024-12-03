@@ -1,13 +1,12 @@
 package org.example.commons.model;
 
-
 import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 
 public class EmployeePersistence {
 
-    public static final String FILENAME = "core/src/main/java/org/example/model/EmployeesData.txt";
+    public static final String FILENAME = MasterPersistence.pathToFiles + "EmployeesData.txt";
 
     public static void writeToFile(ArrayList<Employee> employees) {
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME))) {

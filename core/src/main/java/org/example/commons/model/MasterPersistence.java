@@ -1,8 +1,6 @@
 package org.example.commons.model;
 
 
-import org.example.commons.model.*;
-
 import java.util.ArrayList;
 
 
@@ -12,6 +10,8 @@ import java.util.ArrayList;
  * The data can be accessed using methods.
  */
 public class MasterPersistence {
+
+    public static final String pathToFiles = "core/src/main/java/org/example/commons/model/";
     private final ArrayList<Customer> customers;
     private final ArrayList<Employee> employees;
     private final ArrayList<BillingRecord> billingRecords;

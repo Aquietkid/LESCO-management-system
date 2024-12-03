@@ -1,7 +1,6 @@
 package org.example.client.view;
 
-import org.example.server.controller.CustomerMenu;
-import org.example.server.view.LoginScreen;
+import org.example.client.controller.CustomerMenu;
 
 import javax.swing.*;
 import java.awt.*;

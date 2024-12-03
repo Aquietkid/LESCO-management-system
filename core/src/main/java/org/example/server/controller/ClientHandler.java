@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Map;
 
 public class ClientHandler implements Runnable {
+    /**
+     * Operations: Create, Read, Update, Delete
+     * Subject: customer, bill, tariff, password, CNICCustomer, billReports
+     */
     private static final Map<String, List<String>> VALID_COMBINATIONS = Map.of("read", Arrays.asList("customer", "bill", "tariff", "password", "CNICCustomers"), "update", Arrays.asList("customer", "bill", "tariff", "password"), "delete", Arrays.asList("customer", "bill"), "create", Arrays.asList("customer", "bill"));
 
     private final Socket clientSocket;
@@ -106,6 +110,13 @@ public class ClientHandler implements Runnable {
                 response.put("status", "error");
                 response.put("returnCode", 400); // Bad Request
                 response.put("resultBody", "Invalid subject for read operation: " + subject);
+                /**
+                 * {
+                 *      "status": "error",
+                 *      "returnCode": 400,
+                 *      "resultBody": "Invalid subject for read operation:..."
+                 *  }
+                 */
                 return response;
             }
 

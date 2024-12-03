@@ -8,7 +8,7 @@ import java.util.List;
 
 public class TariffTaxPersistence {
 
-    private static final String FILENAME = "core/src/main/java/org/example/model/TariffTaxInfo.txt";
+    private static final String FILENAME = MasterPersistence.pathToFiles + "TariffTaxInfo.txt";
 
     public static void writeToFile(List<TariffTax> tariffs) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME))) {

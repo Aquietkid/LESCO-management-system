@@ -1,7 +1,6 @@
 package org.example.client.controller;
 
 import org.example.commons.model.*;
-import org.example.server.controller.Menu;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -27,6 +26,7 @@ public class EmployeeMenu extends Menu {
     }
 
     public String viewBillReports() {
+        // TODO: connect to server for logic (read, write, update, delete, each and everything inside server, nothing inside client)
         ArrayList<BillingRecord> billingRecords = MasterPersistence.getInstance().getBillingRecords();
 
         int countPaidBills = 0;
@@ -86,6 +86,7 @@ public class EmployeeMenu extends Menu {
 
 
     public LocalDate getExpiryDate(org.example.commons.model.NADRARecord n) {
+        // TODO: connect to server for logic (read)
         String expiryDate = n.getExpiryDate().trim();
 
         int day = Integer.parseInt(expiryDate.substring(0, 2).trim());
@@ -96,6 +97,7 @@ public class EmployeeMenu extends Menu {
     }
 
     public int changePassword(String password, String newPassword, String confirmPassword) {
+        // TODO: connect to server for logic (read, write, update, delete, each and everything inside server, nothing inside client)
         if (!password.equals(myEmployee.getPassword())) {
             return org.example.server.controller.EmployeeMenu.PASSWORD_MISMATCH;
         } else if (newPassword.equals(myEmployee.getPassword())) {
@@ -124,6 +126,7 @@ public class EmployeeMenu extends Menu {
 
 
     public org.example.commons.model.Customer addCustomer(JFrame parent) {
+        // TODO: connect to server for logic (read, write, update, delete, each and everything inside server, nothing inside client)
         ArrayList<org.example.commons.model.Customer> customers = org.example.commons.model.MasterPersistence.getInstance().getCustomers();
         org.example.client.view.AddCustomerScreen addCustomerScreen = new org.example.client.view.AddCustomerScreen(parent);
         if (addCustomerScreen.isSubmitted()) {
@@ -140,20 +143,24 @@ public class EmployeeMenu extends Menu {
     }
 
     public double calculateCostOfElectricity(double regularReading, double peakReading, TariffTax myTariffTax) {
+        // TODO: fetch myTariffTax from server and perform calculation in client
         double regularRate = myTariffTax.getRegularUnitPrice();
         double peakRate = (myTariffTax.getPeakHourUnitPrice() != null) ? myTariffTax.getPeakHourUnitPrice() : 0.0;
         return (regularReading * regularRate) + (peakReading * peakRate);
     }
 
     public double calculateSalesTax(double costOfElectricity, TariffTax myTariffTax) {
+        // TODO: fetch myTariffTax from server and perform calculation in client
         return costOfElectricity * myTariffTax.getTaxPercentage() / 100;
     }
 
     public TariffTax getTariffTax(Customer myCustomer) {
+        // TODO: connect to server for logic (read, write, update, delete, each and everything inside server, nothing inside client)
         return TariffTax.getTariffTax(MasterPersistence.getInstance().getTariffTaxes(), myCustomer);
     }
 
     public Customer getCustomerFromID(String customerID) {
+
         ArrayList<Customer> customers = MasterPersistence.getInstance().getCustomers();
         for (Customer customer : customers) {
             if (customer.getCustomerID().equals(customerID)) {

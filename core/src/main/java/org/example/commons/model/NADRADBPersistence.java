@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class NADRADBPersistence {
 
-    private static final String FILENAME = "core/src/main/java/org/example/model/NADRADB.txt";
+    private static final String FILENAME = MasterPersistence.pathToFiles + "NADRADB.txt";
 
     public static void writeToFile(ArrayList<NADRARecord> nadraRecords) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME))) {

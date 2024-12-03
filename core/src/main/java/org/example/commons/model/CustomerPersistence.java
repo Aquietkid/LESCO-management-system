@@ -1,7 +1,5 @@
 package org.example.commons.model;
 
-import org.example.commons.model.Customer;
-
 import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -9,7 +7,7 @@ import java.util.List;
 
 public class CustomerPersistence {
 
-    public final static String FILENAME = "core/src/main/java/org/example/model/CustomersData.txt";
+    public final static String FILENAME = MasterPersistence.pathToFiles + "CustomersData.txt";
 
     public static ArrayList<Customer> readFromFile() {
         ArrayList<Customer> customers = new ArrayList<>();

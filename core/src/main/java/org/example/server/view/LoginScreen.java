@@ -1,10 +1,9 @@
 package org.example.server.view;
 
-import org.example.server.controller.ClientHandler;
 import org.example.commons.model.MasterPersistence;
+import org.example.server.controller.ClientHandler;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;

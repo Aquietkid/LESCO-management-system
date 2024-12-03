@@ -5,7 +5,6 @@ import org.example.client.view.BillViewer;
 import org.example.client.view.CNICUpdateScreen;
 import org.example.client.view.CustomerMenuScreen;
 import org.example.commons.model.*;
-import org.example.server.controller.Menu;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class CustomerMenu extends Menu {
     }
 
     public void runMenuGUI() {
-        new CustomerMenuScreen(new org.example.server.controller.CustomerMenu(myCustomer));
+        new CustomerMenuScreen(new CustomerMenu(myCustomer));
     }
 
     public void executeMenuTask(int choice, JFrame customerMenu) {
@@ -50,6 +49,7 @@ public class CustomerMenu extends Menu {
 
     private void updateCNICExpiry(ArrayList<NADRARecord> nadraRecords) {
         new CNICUpdateScreen(nadraRecords, myCustomer);
+        // TODO: connect to server for logic (read, write, update, delete, each and everything inside server, nothing inside client)
     }
 
     private void viewBills(ArrayList<BillingRecord> billingRecords) {
@@ -65,6 +65,7 @@ public class CustomerMenu extends Menu {
     }
 
     public void estimateUpcomingBills(ArrayList<TariffTax> tariffTaxes) {
+        // TODO: connect to server for logic (read, write, update, delete, each and everything inside server, nothing inside client)
         new BillEstimator(myCustomer);
     }
 

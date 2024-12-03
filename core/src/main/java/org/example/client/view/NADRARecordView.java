@@ -1,8 +1,8 @@
 package org.example.client.view;
 
+import org.example.client.controller.EmployeeMenu;
 import org.example.commons.model.MasterPersistence;
 import org.example.commons.model.NADRARecord;
-import org.example.server.controller.EmployeeMenu;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

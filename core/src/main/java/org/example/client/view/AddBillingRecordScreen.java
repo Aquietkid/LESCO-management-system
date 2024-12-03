@@ -1,6 +1,6 @@
 package org.example.client.view;
 
-import org.example.server.controller.EmployeeMenu;
+import org.example.client.controller.EmployeeMenu;
 import org.example.commons.model.BillingRecord;
 import org.example.commons.model.Customer;
 import org.example.commons.model.MasterPersistence;

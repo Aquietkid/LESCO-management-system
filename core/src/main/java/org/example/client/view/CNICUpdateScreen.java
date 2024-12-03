@@ -1,8 +1,8 @@
 package org.example.client.view;
 
-import org.example.commons.utilities.DateInput;
 import org.example.commons.model.Customer;
 import org.example.commons.model.NADRARecord;
+import org.example.commons.utilities.DateInput;
 
 import javax.swing.*;
 import java.awt.*;

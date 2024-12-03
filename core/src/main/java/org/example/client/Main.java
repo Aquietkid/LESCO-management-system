@@ -1,6 +1,6 @@
 package org.example.client;
 
-import org.example.server.view.LoginScreen;
+import org.example.client.view.LoginScreen;
 
 public class Main {
 
