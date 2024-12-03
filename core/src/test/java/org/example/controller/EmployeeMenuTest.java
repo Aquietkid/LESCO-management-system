@@ -1,16 +1,17 @@
 package org.example.controller;
 
-import org.example.model.*;
+import org.example.commons.model.Customer;
+import org.example.commons.model.Employee;
+import org.example.commons.model.NADRARecord;
+import org.example.server.controller.EmployeeMenu;
+import org.example.commons.model.MasterPersistence;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import static org.mockito.Mockito.*;
@@ -48,7 +49,7 @@ class EmployeeMenuTest {
         doReturn("Sample Bill Report").when(employeeMenu).viewBillReports();
         doReturn("Sample CNIC Customers Report").when(employeeMenu).viewCNICCustomers();
         doReturn(0).when(employeeMenu).changePassword("empUser1", "pass1", "pass1");
-        doReturn(EmployeeMenu.CONFIRM_PASSWORD_MISMATCH).when(employeeMenu).changePassword("empUser1", "wrongPass", "newPass");
+        doReturn(org.example.server.controller.EmployeeMenu.CONFIRM_PASSWORD_MISMATCH).when(employeeMenu).changePassword("empUser1", "wrongPass", "newPass");
     }
 
     @AfterEach
