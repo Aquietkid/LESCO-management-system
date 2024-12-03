@@ -1,8 +1,9 @@
 package org.example.controller;
 
-import org.example.model.Customer;
-import org.example.model.Employee;
-import org.example.model.MasterPersistence;
+import org.example.commons.model.Customer;
+import org.example.commons.model.Employee;
+import org.example.commons.model.MasterPersistence;
+import org.example.server.controller.LoginMenu;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LoginMenuTest {
 
-    private LoginMenu loginMenu;
+    private org.example.server.controller.LoginMenu loginMenu;
     private MasterPersistence mockPersistence;
     private ArrayList<Employee> mockEmployees;
     private ArrayList<Customer> mockCustomers;
@@ -23,7 +24,7 @@ class LoginMenuTest {
 
     @BeforeEach
     void setUp() {
-        loginMenu = new LoginMenu();
+        loginMenu = new org.example.server.controller.LoginMenu();
         mockPersistence = Mockito.mock(MasterPersistence.class);
         mockEmployees = new ArrayList<>();
         mockCustomers = new ArrayList<>();
@@ -61,31 +62,31 @@ class LoginMenuTest {
     @Test
     void testLoginWithValidEmployeeCredentials() {
         int result = loginMenu.login("empUser", "empPass");
-        assertEquals(LoginMenu.EMPLOYEE_ID, result, "Login with valid employee credentials should return EMPLOYEE_ID.");
+        assertEquals(org.example.server.controller.LoginMenu.EMPLOYEE_ID, result, "Login with valid employee credentials should return EMPLOYEE_ID.");
     }
 
     @Test
     void testLoginWithValidCustomerCredentials() {
         int result = loginMenu.login("0001", "1234567890123");
-        assertEquals(LoginMenu.CUSTOMER_ID, result, "Login with valid customer credentials should return CUSTOMER_ID.");
+        assertEquals(org.example.server.controller.LoginMenu.CUSTOMER_ID, result, "Login with valid customer credentials should return CUSTOMER_ID.");
     }
 
     @Test
     void testLoginWithInvalidCredentials() {
         int result = loginMenu.login("invalidUser", "invalidPass");
-        assertEquals(LoginMenu.UNKNOWN_ID, result, "Login with invalid credentials should return UNKNOWN_ID.");
+        assertEquals(org.example.server.controller.LoginMenu.UNKNOWN_ID, result, "Login with invalid credentials should return UNKNOWN_ID.");
     }
 
     @Test
     void testLoginWithEmptyUsernameAndPassword() {
         int result = loginMenu.login("", "");
-        assertEquals(LoginMenu.UNKNOWN_ID, result, "Login with empty username and password should return UNKNOWN_ID.");
+        assertEquals(org.example.server.controller.LoginMenu.UNKNOWN_ID, result, "Login with empty username and password should return UNKNOWN_ID.");
     }
 
     @Test
     void testLoginWithNullUsernameAndPassword() {
         int result = loginMenu.login(null, null);
-        assertEquals(LoginMenu.UNKNOWN_ID, result, "Login with null username and password should return UNKNOWN_ID.");
+        assertEquals(org.example.server.controller.LoginMenu.UNKNOWN_ID, result, "Login with null username and password should return UNKNOWN_ID.");
     }
 
     @Test
