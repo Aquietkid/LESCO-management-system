@@ -1,5 +1,6 @@
 package org.example.client.controller;
 
+import org.example.client.view.AddCustomerScreen;
 import org.example.commons.model.*;
 import org.json.JSONObject;
 
@@ -26,28 +27,37 @@ public class EmployeeMenu extends Menu {
     }
 
     public String viewBillReports() {
-        // TODO: connect to server for logic (read, write, update, delete, each and everything inside server, nothing inside client)
-        ArrayList<BillingRecord> billingRecords = MasterPersistence.getInstance().getBillingRecords();
+        JSONObject request = new JSONObject();
+        request.put("operation", "read");
+        request.put("subject", "billingReports");
+        request.put("parameters", new JSONObject()); // No specific parameters needed
+        request.put("username", myEmployee.getUsername());
+        request.put("password", myEmployee.getPassword());
 
-        int countPaidBills = 0;
-        int countUnpaidBills = 0;
-        float unpaidAmount = 0.0f;
-        float paidAmount = 0.0f;
+        try (Socket socket = new Socket("localhost", 12345);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
-        for (org.example.commons.model.BillingRecord br : billingRecords) {
-            if (br.getBillPaidStatus()) {
-                countPaidBills++;
-                paidAmount += br.getTotalBillingAmount();
-            } else {
-                countUnpaidBills++;
-                unpaidAmount += br.getTotalBillingAmount();
+            out.println(request.toString());
+            out.println("END");
+
+            StringBuilder responseBuilder = new StringBuilder();
+            String responseLine;
+            while ((responseLine = in.readLine()) != null && !responseLine.isEmpty()) {
+                responseBuilder.append(responseLine);
             }
-        }
-        return "Bill report: " +
-                "\nTotal unpaid bills: " + countUnpaidBills + "\nTotal amount unpaid: " + unpaidAmount +
-                "\nTotal paid bills: " + countPaidBills + "\nTotal amount paid: " + paidAmount;
-    }
 
+            JSONObject response = new JSONObject(responseBuilder.toString());
+            if ("success".equalsIgnoreCase(response.getString("status"))) {
+                return response.getString("resultBody");
+            } else {
+                return "Error: " + response.getString("resultBody");
+            }
+
+        } catch (IOException e) {
+            return "Error: Unable to communicate with the server. " + e.getMessage();
+        }
+    }
     public String viewCNICCustomers() {
         JSONObject request = new JSONObject();
         request.put("operation", "read");
@@ -56,7 +66,7 @@ public class EmployeeMenu extends Menu {
         request.put("username", myEmployee.getUsername());
         request.put("password", myEmployee.getPassword());
 
-        try (Socket socket = new Socket("localhost", 12345);
+        try (Socket socket = new Socket("192.168.47.232", 12345);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
@@ -125,28 +135,92 @@ public class EmployeeMenu extends Menu {
     }
 
 
-    public org.example.commons.model.Customer addCustomer(JFrame parent) {
-        // TODO: connect to server for logic (read, write, update, delete, each and everything inside server, nothing inside client)
-        ArrayList<org.example.commons.model.Customer> customers = org.example.commons.model.MasterPersistence.getInstance().getCustomers();
+    public Customer addCustomer(JFrame parent) {
         org.example.client.view.AddCustomerScreen addCustomerScreen = new org.example.client.view.AddCustomerScreen(parent);
         if (addCustomerScreen.isSubmitted()) {
             Customer customer = addCustomerScreen.getNewCustomer();
-            if (!customers.contains(customer)) {
-                customers.add(customer);
-                org.example.commons.model.MasterPersistence.getInstance().setCustomersUpdated();
-                return customer;
-            } else {
-                JOptionPane.showMessageDialog(parent, "Customer ID already exists!");
+
+            JSONObject request = new JSONObject();
+            request.put("operation", "write");
+            request.put("subject", "customer");
+            request.put("username", myEmployee.getUsername());
+            request.put("password", myEmployee.getPassword());
+            request.put("parameters", new JSONObject()
+                    .put("customerID", customer.getCustomerID())
+                    .put("cnic", customer.getCNIC())
+                    .put("name", customer.getCustomerName())
+                    .put("address", customer.getAddress())
+                    .put("phone", customer.getPhone())
+                    .put("isCommercial", customer.getIsCommercial())
+                    .put("isThreePhase", customer.getThreePhase())
+                    .put("connectionDate", customer.getConnectionDate())
+            );
+
+            try (Socket socket = new Socket("localhost", 12345);
+                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+                out.println(request.toString());
+                out.println("END");
+
+                StringBuilder responseBuilder = new StringBuilder();
+                String responseLine;
+                while ((responseLine = in.readLine()) != null && !responseLine.isEmpty()) {
+                    responseBuilder.append(responseLine);
+                }
+
+                JSONObject response = new JSONObject(responseBuilder.toString());
+                if ("success".equalsIgnoreCase(response.getString("status"))) {
+                    return customer;
+                } else {
+                    JOptionPane.showMessageDialog(parent, "Error: " + response.getString("resultBody"));
+                    return null;
+                }
+
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(parent, "Error: Unable to communicate with the server. " + e.getMessage());
+                return null;
             }
         }
         return null;
     }
-
     public double calculateCostOfElectricity(double regularReading, double peakReading, TariffTax myTariffTax) {
-        // TODO: fetch myTariffTax from server and perform calculation in client
-        double regularRate = myTariffTax.getRegularUnitPrice();
-        double peakRate = (myTariffTax.getPeakHourUnitPrice() != null) ? myTariffTax.getPeakHourUnitPrice() : 0.0;
-        return (regularReading * regularRate) + (peakReading * peakRate);
+        JSONObject request = new JSONObject();
+        request.put("operation", "read");
+        request.put("subject", "electricityCost");
+        request.put("username", myEmployee.getUsername());
+        request.put("password", myEmployee.getPassword());
+        request.put("parameters", new JSONObject()
+                .put("regularReading", regularReading)
+                .put("peakReading", peakReading)
+                .put("regularUnitPrice", myTariffTax.getRegularUnitPrice())
+                .put("peakHourUnitPrice", myTariffTax.getPeakHourUnitPrice())
+        );
+
+        try (Socket socket = new Socket("localhost", 12345);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+            out.println(request.toString());
+            out.println("END");
+
+            StringBuilder responseBuilder = new StringBuilder();
+            String responseLine;
+            while ((responseLine = in.readLine()) != null && !responseLine.isEmpty()) {
+                responseBuilder.append(responseLine);
+            }
+
+            JSONObject response = new JSONObject(responseBuilder.toString());
+            if ("success".equalsIgnoreCase(response.getString("status"))) {
+                return response.getDouble("resultBody");
+            } else {
+                throw new IOException("Error: " + response.getString("resultBody"));
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error: Unable to communicate with the server. " + e.getMessage());
+            return -1;
+        }
     }
 
     public double calculateSalesTax(double costOfElectricity, TariffTax myTariffTax) {
@@ -160,14 +234,50 @@ public class EmployeeMenu extends Menu {
     }
 
     public Customer getCustomerFromID(String customerID) {
+        JSONObject request = new JSONObject();
+        request.put("operation", "read");
+        request.put("subject", "customer");
+        request.put("username", myEmployee.getUsername());
+        request.put("password", myEmployee.getPassword());
+        request.put("parameters", new JSONObject().put("customerID", customerID));
 
-        ArrayList<Customer> customers = MasterPersistence.getInstance().getCustomers();
-        for (Customer customer : customers) {
-            if (customer.getCustomerID().equals(customerID)) {
-                return customer;
+        try (Socket socket = new Socket("localhost", 12345);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+            out.println(request.toString());
+            out.println("END");
+
+            StringBuilder responseBuilder = new StringBuilder();
+            String responseLine;
+            while ((responseLine = in.readLine()) != null && !responseLine.isEmpty()) {
+                responseBuilder.append(responseLine);
             }
+
+            JSONObject response = new JSONObject(responseBuilder.toString());
+            if ("success".equalsIgnoreCase(response.getString("status"))) {
+                JSONObject customerJson = response.getJSONObject("resultBody");
+                return new Customer(
+                        customerJson.getString("customerID"),
+                        customerJson.getString("cnic"),
+                        customerJson.getString("name"),
+                        customerJson.getString("address"),
+                        customerJson.getString("phone"),
+                        customerJson.getBoolean("isCommercial"),
+                        customerJson.getBoolean("isThreePhase"),
+                        customerJson.getString("connectionDate"),
+                        customerJson.getInt("regularUnitsConsumed"),
+                        customerJson.getInt("peakUnitsConsumed")
+                );
+            } else {
+                System.err.println("Error: " + response.getString("resultBody"));
+                return null;
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error: Unable to communicate with the server. " + e.getMessage());
+            return null;
         }
-        return null;
     }
 
     public int getMaxCustomerID() {
