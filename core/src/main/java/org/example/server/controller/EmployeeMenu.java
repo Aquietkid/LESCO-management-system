@@ -105,20 +105,10 @@ public class EmployeeMenu extends Menu {
     }
 
 
-    public Customer addCustomer(JFrame parent) {
+    public void addCustomer(Customer newCustomer) {
         ArrayList<Customer> customers = MasterPersistence.getInstance().getCustomers();
-        AddCustomerScreen addCustomerScreen = new AddCustomerScreen(parent);
-        if (addCustomerScreen.isSubmitted()) {
-            Customer customer = addCustomerScreen.getNewCustomer();
-            if (!customers.contains(customer)) {
-                customers.add(customer);
-                MasterPersistence.getInstance().setCustomersUpdated();
-                return customer;
-            } else {
-                JOptionPane.showMessageDialog(parent, "Customer ID already exists!");
-            }
-        }
-        return null;
+        customers.add(newCustomer);
+        MasterPersistence.getInstance().setCustomersUpdated();
     }
 
     public double calculateCostOfElectricity(double regularReading, double peakReading, TariffTax myTariffTax) {

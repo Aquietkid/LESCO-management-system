@@ -1,5 +1,6 @@
 package org.example.server.controller;
 
+import org.example.commons.model.Customer;
 import org.example.commons.model.Employee;
 import org.json.JSONObject;
 
@@ -13,9 +14,14 @@ import java.util.Map;
 public class ClientHandler implements Runnable {
     /**
      * Operations: Create, Read, Update, Delete
-     * Subject: customer, bill, tariff, password, CNICCustomer, billReports
+     * Subject: customer, bill, tariff, password, CNICCustomer, billReports, loginStatus
      */
-    private static final Map<String, List<String>> VALID_COMBINATIONS = Map.of("read", Arrays.asList("customer", "bill", "tariff", "password", "CNICCustomers"), "update", Arrays.asList("customer", "bill", "tariff", "password"), "delete", Arrays.asList("customer", "bill"), "create", Arrays.asList("customer", "bill"));
+    private static final Map<String, List<String>> VALID_COMBINATIONS = Map.of(
+            "read", Arrays.asList("customer", "bill", "tariff", "password", "CNICCustomers", "billReports", "loginStatus"),
+            "update", Arrays.asList("customer", "bill", "tariff", "password"),
+            "delete", Arrays.asList("customer", "bill"),
+            "create", Arrays.asList("customer", "bill")
+    );
 
     private final Socket clientSocket;
 
@@ -25,7 +31,11 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
-        try (InputStream input = clientSocket.getInputStream(); OutputStream output = clientSocket.getOutputStream(); BufferedReader reader = new BufferedReader(new InputStreamReader(input)); PrintWriter writer = new PrintWriter(output, true)) {
+        try (InputStream input = clientSocket.getInputStream();
+             OutputStream output = clientSocket.getOutputStream();
+             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+             PrintWriter writer = new PrintWriter(output, true)) {
+
             StringBuilder requestBuilder = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
@@ -35,10 +45,11 @@ public class ClientHandler implements Runnable {
                 requestBuilder.append(line);
             }
 
-            System.out.println(requestBuilder.toString());
+            System.out.println(requestBuilder);
 
             JSONObject request = new JSONObject(requestBuilder.toString());
             JSONObject response = processRequest(request);
+
             writer.println(response.toString(4)); // Send response to the client
 
         } catch (IOException e) {
@@ -53,8 +64,6 @@ public class ClientHandler implements Runnable {
     }
 
     private JSONObject processRequest(JSONObject request) {
-        JSONObject response = null;
-
         try {
             // Extract fields from request
             String operation = request.optString("operation", "");
@@ -71,82 +80,93 @@ public class ClientHandler implements Runnable {
                 return createErrorResponse("Invalid subject for operation '" + operation + "': " + subject);
             }
 
-            // Process the request based on operation and subject
-            switch (operation) {
-                case "read":
-                    response = handleRead(subject, parameters, username, password);
-                    break;
-                case "create":
-                    response = handleCreate(subject, parameters, username, password);
-                    break;
-                case "update":
-                    response = handleUpdate(subject, parameters, username, password);
-                    break;
-                case "delete":
-                    response = handleDelete(subject, parameters, username, password);
-                    break;
-                default:
-                    return createErrorResponse("Unknown operation: " + operation);
-            }
+            // Process request
+            return switch (operation) {
+                case "read" -> handleRead(subject, parameters, username, password);
+                case "create" -> handleCreate(subject, parameters, username, password);
+                case "update" -> handleUpdate(subject, parameters, username, password);
+                case "delete" -> handleDelete(subject, parameters, username, password);
+                default -> createErrorResponse("Unknown operation: " + operation);
+            };
 
         } catch (Exception e) {
-            response = createErrorResponse("An error occurred: " + e.getMessage());
+            return createErrorResponse("An error occurred: " + e.getMessage());
         }
-
-        return response;
     }
 
     private JSONObject handleRead(String subject, JSONObject parameters, String username, String password) {
-        JSONObject response = new JSONObject();
-
         try {
-
-            // Authenticate employee
-            authenticateEmployee(username, password);
-
-            // Check if subject is valid
-            // TODO: add all operations to check for validity
-            if (!"CNICCustomers".equals(subject)) {
-                response.put("status", "error");
-                response.put("returnCode", 400); // Bad Request
-                response.put("resultBody", "Invalid subject for read operation: " + subject);
-                /**
-                 * {
-                 *      "status": "error",
-                 *      "returnCode": 400,
-                 *      "resultBody": "Invalid subject for read operation:..."
-                 *  }
-                 */
-                return response;
+            switch (subject) {
+                case "customer" -> {
+                    return createSuccessResponse("Customer data read successfully.");
+                }
+                case "bill" -> {
+                    return createSuccessResponse("Bill data read successfully.");
+                }
+                case "CNICCustomers" -> {
+                    authenticateEmployee(username, password);
+                    EmployeeMenu employeeMenu = new EmployeeMenu(new Employee(username, password));
+                    String resultBody = employeeMenu.viewCNICCustomers();
+                    return createSuccessResponse(resultBody);
+                }
+                case "billReports" -> {
+                    authenticateEmployee(username, password);
+                    EmployeeMenu employeeMenu = new EmployeeMenu(new Employee(username, password));
+                    String resultBody = employeeMenu.viewBillReports();
+                    return createSuccessResponse(resultBody);
+                }
+                default -> {
+                    return createErrorResponse("Invalid subject for read operation: " + subject);
+                }
             }
-
-            // Initialize EmployeeMenu and perform read operation
-            EmployeeMenu employeeMenu = new EmployeeMenu(new Employee(username, password));
-            String resultBody = employeeMenu.viewCNICCustomers();
-
-            // Success response
-            prepareSuccessResponse(response, resultBody);
-
         } catch (AuthenticationException e) {
-            // Handle authentication failure
-            response.put("status", "error");
-            response.put("returnCode", 401); // Unauthorized
-            response.put("resultBody", "Authentication failed: " + e.getMessage());
-
+            return createErrorResponse("Authentication failed: " + e.getMessage(), 401);
         } catch (Exception e) {
-            // Handle other exceptions
-            response.put("status", "error");
-            response.put("returnCode", 500); // Internal Server Error
-            response.put("resultBody", "An error occurred: " + e.getMessage());
+            return createErrorResponse("An error occurred: " + e.getMessage());
         }
-
-        return response;
     }
 
-    private static void prepareSuccessResponse(JSONObject response, String resultBody) {
-        response.put("status", "success");
-        response.put("returnCode", 200); // OK
-        response.put("resultBody", resultBody);
+    private JSONObject handleCreate(String subject, JSONObject parameters, String username, String password) {
+        try {
+            authenticateEmployee(username, password);
+
+            if ("customer".equals(subject)) {
+                Customer newCustomer = createCustomerFromParameters(parameters);
+                EmployeeMenu employeeMenu = new EmployeeMenu(new Employee(username, password));
+                employeeMenu.addCustomer(newCustomer);
+                return createSuccessResponse("Customer created successfully.");
+            } else if ("bill".equals(subject)) {
+                return createSuccessResponse("Bill created successfully.");
+            } else {
+                return createErrorResponse("Invalid subject for create operation: " + subject);
+            }
+        } catch (AuthenticationException e) {
+            return createErrorResponse("Authentication failed: " + e.getMessage(), 401);
+        } catch (Exception e) {
+            return createErrorResponse("Invalid data or missing fields: " + e.getMessage());
+        }
+    }
+
+    private JSONObject handleUpdate(String subject, JSONObject parameters, String username, String password) {
+        try {
+            authenticateEmployee(username, password);
+            return createSuccessResponse(subject + " updated successfully.");
+        } catch (AuthenticationException e) {
+            return createErrorResponse("Authentication failed: " + e.getMessage(), 401);
+        } catch (Exception e) {
+            return createErrorResponse("An error occurred: " + e.getMessage());
+        }
+    }
+
+    private JSONObject handleDelete(String subject, JSONObject parameters, String username, String password) {
+        try {
+            authenticateEmployee(username, password);
+            return createSuccessResponse(subject + " deleted successfully.");
+        } catch (AuthenticationException e) {
+            return createErrorResponse("Authentication failed: " + e.getMessage(), 401);
+        } catch (Exception e) {
+            return createErrorResponse("An error occurred: " + e.getMessage());
+        }
     }
 
     private void authenticateEmployee(String username, String password) throws AuthenticationException {
@@ -156,38 +176,36 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void authenticateCustomer(String username, String password) throws AuthenticationException {
-        LoginMenu loginMenu = new LoginMenu();
-        if (loginMenu.login(username, password) != LoginMenu.CUSTOMER_ID) {
-            throw new AuthenticationException("Unauthorized User!");
-        }
+    private Customer createCustomerFromParameters(JSONObject parameters) {
+        return new Customer(
+                parameters.getString("customerID"),
+                parameters.getString("cnic"),
+                parameters.getString("name"),
+                parameters.getString("address"),
+                parameters.getString("phone"),
+                parameters.getBoolean("isCommercial"),
+                parameters.getBoolean("isThreePhase"),
+                parameters.getString("connectionDate")
+        );
     }
 
-    private JSONObject handleCreate(String subject, JSONObject parameters, String username, String password) {
+    private JSONObject createSuccessResponse(String message) {
         JSONObject response = new JSONObject();
         response.put("status", "success");
-        response.put("message", subject + " created successfully.");
+        response.put("returnCode", 200);
+        response.put("resultBody", message);
         return response;
     }
 
-    private JSONObject handleUpdate(String subject, JSONObject parameters, String username, String password) {
+    private JSONObject createErrorResponse(String message, int returnCode) {
         JSONObject response = new JSONObject();
-        response.put("status", "success");
-        response.put("message", subject + " updated successfully.");
-        return response;
-    }
-
-    private JSONObject handleDelete(String subject, JSONObject parameters, String username, String password) {
-        JSONObject response = new JSONObject();
-        response.put("status", "success");
-        response.put("message", subject + " deleted successfully.");
+        response.put("status", "error");
+        response.put("returnCode", returnCode);
+        response.put("resultBody", message);
         return response;
     }
 
     private JSONObject createErrorResponse(String message) {
-        JSONObject response = new JSONObject();
-        response.put("status", "error");
-        response.put("message", message);
-        return response;
+        return createErrorResponse(message, 500);
     }
 }

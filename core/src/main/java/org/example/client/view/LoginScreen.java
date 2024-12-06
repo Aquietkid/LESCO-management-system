@@ -12,9 +12,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 
-public class LoginScreen {
-    private final JFrame frame1;
+public class LoginScreen extends JFrame {
     private final JFormattedTextField usernameTextField;
     private final JPasswordField passwordTextField;
     private final JButton loginButton;
@@ -22,7 +22,7 @@ public class LoginScreen {
     private final JLabel passwordLabel;
 
     public LoginScreen() {
-        frame1 = new JFrame();
+//        frame1 = new JFrame();
         usernameTextField = new JFormattedTextField();
         passwordTextField = new JPasswordField();
         loginButton = new JButton();
@@ -42,21 +42,21 @@ public class LoginScreen {
     }
 
     private void initFrame1() {
-        frame1.setTitle("Login to LESCO");
+        setTitle("Login to LESCO");
         ImageIcon logo = new ImageIcon("org/example/server/assets/lesco-pk-logo.png");
-        frame1.setIconImage(logo.getImage());
-        frame1.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame1.setBounds(560, 190, 800, 600);
-        frame1.setVisible(true);
-        frame1.setLayout(null);
-        frame1.add(usernameTextField);
-        frame1.add(passwordTextField);
-        frame1.add(loginButton);
-        frame1.add(usernameLabel);
-        frame1.add(passwordLabel);
-        frame1.setMinimumSize(new Dimension(400, 300));
+        setIconImage(logo.getImage());
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setBounds(560, 190, 800, 600);
+        setVisible(true);
+        setLayout(null);
+        add(usernameTextField);
+        add(passwordTextField);
+        add(loginButton);
+        add(usernameLabel);
+        add(passwordLabel);
+        setMinimumSize(new Dimension(400, 300));
 
-        frame1.addWindowListener(new WindowAdapter() {
+        addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
                 // Initial file-reading
@@ -112,17 +112,22 @@ public class LoginScreen {
         String username = usernameTextField.getText();
         String password = String.valueOf(passwordTextField.getPassword());
         UserWrapper myUser = new UserWrapper();
-        int loginStatus = myUser.getLoginStatus(username, password);
+        int loginStatus = 0;
+        try {
+            loginStatus = myUser.getLoginStatus(username, password);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
+        }
 
         if (loginStatus == LoginMenu.CUSTOMER_ID) {
             CustomerMenu customerMenu = new CustomerMenu(myUser.getMyUser());
-            frame1.dispose();
+            dispose();
             customerMenu.runMenuGUI();
         } else if (loginStatus == LoginMenu.EMPLOYEE_ID) {
             new EmployeeMenuScreen(myUser.getMyUser());
-            frame1.dispose();
+            dispose();
         } else {
-            JOptionPane.showMessageDialog(frame1, "Invalid login credentials! Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Invalid login credentials! Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
             passwordTextField.setText("");
         }
     }

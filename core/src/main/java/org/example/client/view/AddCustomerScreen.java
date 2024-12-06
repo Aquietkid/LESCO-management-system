@@ -125,10 +125,10 @@ public class AddCustomerScreen extends JFrame {
             String connectionDate = String.format("%02d-%02d-%04d", java.time.LocalDate.now().getDayOfMonth(), java.time.LocalDate.now().getMonthValue(), java.time.LocalDate.now().getYear()); // Autofilled with today's date
 
             newCustomer = new Customer(maxID, CNIC, customerName, address, phone, isCommercial, isThreePhase, connectionDate, regularUnits, peakUnits);
-            MasterPersistence.getInstance().getCustomers().add(newCustomer);
-            MasterPersistence.getInstance().setCustomersUpdated();
-            JOptionPane.showMessageDialog(this, "Customer added!");
-            isSubmitted = true;
+//            MasterPersistence.getInstance().getCustomers().add(newCustomer);
+//            MasterPersistence.getInstance().setCustomersUpdated();
+//            JOptionPane.showMessageDialog(this, "Customer added!");
+//            isSubmitted = true;
             dispose();
         });
 

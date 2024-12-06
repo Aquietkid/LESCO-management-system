@@ -1,7 +1,10 @@
 package org.example.client.controller;
 
-import org.example.client.view.AddCustomerScreen;
-import org.example.commons.model.*;
+import org.example.client.ServerParams;
+import org.example.commons.model.Customer;
+import org.example.commons.model.MasterPersistence;
+import org.example.commons.model.TariffTax;
+import org.example.commons.model.User;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -30,7 +33,7 @@ public class EmployeeMenu extends Menu {
         JSONObject request = new JSONObject();
         request.put("operation", "read");
         request.put("subject", "billingReports");
-        request.put("parameters", new JSONObject()); // No specific parameters needed
+        request.put("parameters", new JSONObject());
         request.put("username", myEmployee.getUsername());
         request.put("password", myEmployee.getPassword());
 
@@ -38,8 +41,7 @@ public class EmployeeMenu extends Menu {
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
-            out.println(request.toString());
-            out.println("END");
+            out.println(request);
 
             StringBuilder responseBuilder = new StringBuilder();
             String responseLine;
@@ -58,6 +60,7 @@ public class EmployeeMenu extends Menu {
             return "Error: Unable to communicate with the server. " + e.getMessage();
         }
     }
+
     public String viewCNICCustomers() {
         JSONObject request = new JSONObject();
         request.put("operation", "read");
@@ -66,14 +69,13 @@ public class EmployeeMenu extends Menu {
         request.put("username", myEmployee.getUsername());
         request.put("password", myEmployee.getPassword());
 
-        try (Socket socket = new Socket("192.168.47.232", 12345);
+        try (Socket socket = new Socket(ServerParams.ServerIP, 12345);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
             // Send the request with a newline
             System.out.println(request);
             out.println(request.toString());
-            out.println("END");
 
             StringBuilder responseBuilder = new StringBuilder();
             String responseLine;
@@ -92,7 +94,6 @@ public class EmployeeMenu extends Menu {
             return "Error: Unable to communicate with the server. " + e.getMessage();
         }
     }
-
 
 
     public LocalDate getExpiryDate(org.example.commons.model.NADRARecord n) {
@@ -156,7 +157,7 @@ public class EmployeeMenu extends Menu {
                     .put("connectionDate", customer.getConnectionDate())
             );
 
-            try (Socket socket = new Socket("localhost", 12345);
+            try (Socket socket = new Socket(ServerParams.ServerIP, 12345);
                  PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                  BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
@@ -184,6 +185,7 @@ public class EmployeeMenu extends Menu {
         }
         return null;
     }
+
     public double calculateCostOfElectricity(double regularReading, double peakReading, TariffTax myTariffTax) {
         JSONObject request = new JSONObject();
         request.put("operation", "read");

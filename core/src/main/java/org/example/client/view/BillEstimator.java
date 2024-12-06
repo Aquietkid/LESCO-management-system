@@ -89,7 +89,7 @@ public class BillEstimator extends JFrame {
         add(labelsPanel);
     }
 
-    private void updateTotal() {
+    public void updateTotal() {
         double currentRegularUnits = (double) spinRegularUnits.getValue() - myCustomer.getRegularUnitsConsumed();
         Double currentPeakUnits = (Double) spinPeakUnits.getValue() - myCustomer.getPeakUnitsConsumed();
 
@@ -98,10 +98,33 @@ public class BillEstimator extends JFrame {
         Double fixedCharges = myTariffTax.getFixedCharges();
         Double total = costOfElectricity + salesTaxAmount + fixedCharges;
 
-        lblElectricityCost.setText("Electricity Cost: Rs. " + String.format("%.2f",costOfElectricity));
+        lblElectricityCost.setText("Electricity Cost: Rs. " + String.format("%.2f", costOfElectricity));
         lblSalesTax.setText("Sales Tax: Rs. " + String.format("%.2f", salesTaxAmount));
         lblFixedCharges.setText("Fixed Charges: Rs. " + String.format("%.2f", fixedCharges));
         lblTotal.setText("Total Reading: Rs. " + String.format("%.2f", total));
     }
 
+    public JSpinner getSpinRegularUnits() {
+        return spinRegularUnits;
+    }
+
+    public JSpinner getSpinPeakUnits() {
+        return spinPeakUnits;
+    }
+
+    public JLabel getLblElectricityCost() {
+        return lblElectricityCost;
+    }
+
+    public JLabel getLblSalesTax() {
+        return lblSalesTax;
+    }
+
+    public JLabel getLblFixedCharges() {
+        return lblFixedCharges;
+    }
+
+    public JLabel getLblTotal() {
+        return lblTotal;
+    }
 }
