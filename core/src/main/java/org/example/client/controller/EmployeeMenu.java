@@ -34,7 +34,7 @@ public class EmployeeMenu extends Menu {
         request.put("username", myEmployee.getUsername());
         request.put("password", myEmployee.getPassword());
 
-        try (Socket socket = new Socket("localhost", 12345);
+        try (Socket socket = new Socket("192.168.47.232", 12345);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
@@ -156,7 +156,7 @@ public class EmployeeMenu extends Menu {
                     .put("connectionDate", customer.getConnectionDate())
             );
 
-            try (Socket socket = new Socket("localhost", 12345);
+            try (Socket socket = new Socket("192.168.47.232", 12345);
                  PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                  BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
@@ -197,7 +197,7 @@ public class EmployeeMenu extends Menu {
                 .put("peakHourUnitPrice", myTariffTax.getPeakHourUnitPrice())
         );
 
-        try (Socket socket = new Socket("localhost", 12345);
+        try (Socket socket = new Socket("192.168.47.232", 12345);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
@@ -241,7 +241,7 @@ public class EmployeeMenu extends Menu {
         request.put("password", myEmployee.getPassword());
         request.put("parameters", new JSONObject().put("customerID", customerID));
 
-        try (Socket socket = new Socket("localhost", 12345);
+        try (Socket socket = new Socket("192.168.47.232", 12345);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
