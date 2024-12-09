@@ -20,15 +20,15 @@ public class TariffTax {
         this.fixedCharges = fixedCharges;
     }
 
-    public static org.example.commons.model.TariffTax getTariffTax(ArrayList<org.example.commons.model.TariffTax> tariffTaxes, Customer myCustomer) {
-        org.example.commons.model.TariffTax myTariffTax;
-        if (!myCustomer.getThreePhase() && !myCustomer.getIsCommercial()) { //1-phase domestic
+    public static TariffTax getTariffTax(ArrayList<TariffTax> tariffTaxes, Customer myCustomer) {
+        TariffTax myTariffTax;
+        if (!myCustomer.getThreePhase() && !myCustomer.getIsCommercial()) {
             myTariffTax = tariffTaxes.getFirst();
-        } else if (!myCustomer.getThreePhase() && myCustomer.getIsCommercial()) { //1-phase commercial
+        } else if (!myCustomer.getThreePhase() && myCustomer.getIsCommercial()) {
             myTariffTax = tariffTaxes.get(1);
-        } else if (myCustomer.getThreePhase() && !myCustomer.getIsCommercial()) { //3-phase domestic
+        } else if (myCustomer.getThreePhase() && !myCustomer.getIsCommercial()) {
             myTariffTax = tariffTaxes.get(2);
-        } else { //3-phase commercial
+        } else {
             myTariffTax = tariffTaxes.get(3);
         }
         return myTariffTax;
@@ -77,7 +77,7 @@ public class TariffTax {
     @Override
     public String toString() {
         return "Meter Type: " + meterType +
-                ", Models.Customer Type: " + customerType +
+                ", Customer Type: " + customerType +
                 ", Regular Unit Price: " + regularUnitPrice +
                 ", Peak Hour Unit Price: " + (peakHourUnitPrice != null ? peakHourUnitPrice : "N/A") +
                 ", Tax Percentage: " + taxPercentage +

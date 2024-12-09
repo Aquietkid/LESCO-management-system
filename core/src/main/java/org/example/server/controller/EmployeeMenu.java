@@ -125,7 +125,7 @@ public class EmployeeMenu extends Menu {
         return TariffTax.getTariffTax(MasterPersistence.getInstance().getTariffTaxes(), myCustomer);
     }
 
-    public Customer getCustomerFromID(String customerID) {
+    public static Customer getCustomerFromID(String customerID) {
         ArrayList<Customer> customers = MasterPersistence.getInstance().getCustomers();
         for (Customer customer : customers) {
             if (customer.getCustomerID().equals(customerID)) {

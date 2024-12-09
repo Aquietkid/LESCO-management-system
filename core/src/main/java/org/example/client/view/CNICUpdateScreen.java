@@ -1,5 +1,6 @@
 package org.example.client.view;
 
+import org.example.client.controller.CustomerMenu;
 import org.example.commons.model.Customer;
 import org.example.commons.model.NADRARecord;
 import org.example.commons.utilities.DateInput;
@@ -9,15 +10,17 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class CNICUpdateScreen extends javax.swing.JFrame {
-    private final ArrayList<NADRARecord> nadraRecords;
+//    private final ArrayList<NADRARecord> nadraRecords;
     JLabel lblCNIC;
     JTextField txtCNIC;
     JButton btnUpdateCNICExpiry;
-    private final Customer myCustomer;
+//    private final Customer myCustomer;
+    private CustomerMenu customerMenu;
+    private final JFrame customerMenuFrame;
 
-    public CNICUpdateScreen(ArrayList<NADRARecord> nadraRecords, Customer myCustomer) {
-        this.nadraRecords = nadraRecords;
-        this.myCustomer = myCustomer;
+    public CNICUpdateScreen(CustomerMenu customerMenu, JFrame customerMenuFrame) {
+        this.customerMenu = customerMenu;
+        this.customerMenuFrame = customerMenuFrame;
         init();
     }
 
@@ -32,17 +35,10 @@ public class CNICUpdateScreen extends javax.swing.JFrame {
         setLayout(new GridLayout(2, 2, 20, 20));
 
         btnUpdateCNICExpiry.addActionListener(e -> {
-            if(txtCNIC.getText().equals(myCustomer.getCNIC())) {
-                for(NADRARecord record : nadraRecords) {
-                    if(record.getCNIC().equals(txtCNIC.getText())) {
-                        record.setExpiryDate(String.format("%02d-%02d-%04d", dateInput.getDate(), dateInput.getMonth(), dateInput.getYear()));
-                        break;
-                    }
-                }
+            if(Boolean.TRUE.equals(customerMenu.updateCNICExpiry(String.format("%02d-%02d-%04d", dateInput.getDate(), dateInput.getMonth(), dateInput.getYear())))) {
+                JOptionPane.showMessageDialog(this, "CNIC expiry updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             }
-            else {
-                JOptionPane.showMessageDialog(this, myCustomer.getCNIC() + " is not your CNIC number! Please enter CNIC again!", "Incorrect CNIC!", JOptionPane.ERROR_MESSAGE);
-            }
+            else JOptionPane.showMessageDialog(this, "Failed to update CNIC expiry!", "Error", JOptionPane.ERROR_MESSAGE);
         });
 
         add(lblCNIC);

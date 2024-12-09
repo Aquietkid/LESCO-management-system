@@ -48,9 +48,28 @@ public class BillingRecord {
         return customerID + "," + billingMonth + "," + currentMeterReadingRegular + "," + currentMeterReadingPeak + "," + readingEntryDate + "," + costOfElectricity + "," + salesTaxAmount + "," + fixedCharges + "," + totalBillingAmount + "," + dueDate + "," + billPaidStatus + "," + billPaymentDate + "\n";
     }
 
+//    @Override
+//    public String toString() {
+//        return "Models.Customer ID: " + customerID + ", Billing Month: " + billingMonth + ", Regular Reading: " + currentMeterReadingRegular + ", Peak Reading: " + currentMeterReadingPeak + ", Reading Entry Date: " + readingEntryDate + ", Cost of Electricity: " + costOfElectricity + ", Sales Tax: " + salesTaxAmount + ", Fixed Charges: " + fixedCharges + ", Total Billing: " + totalBillingAmount + ", Due Date: " + dueDate + ", Status: " + billPaidStatus + ", Payment Date: " + billPaymentDate;
+//    }
+
+
     @Override
     public String toString() {
-        return "Models.Customer ID: " + customerID + ", Billing Month: " + billingMonth + ", Regular Reading: " + currentMeterReadingRegular + ", Peak Reading: " + currentMeterReadingPeak + ", Reading Entry Date: " + readingEntryDate + ", Cost of Electricity: " + costOfElectricity + ", Sales Tax: " + salesTaxAmount + ", Fixed Charges: " + fixedCharges + ", Total Billing: " + totalBillingAmount + ", Due Date: " + dueDate + ", Status: " + billPaidStatus + ", Payment Date: " + billPaymentDate;
+        return "BillingRecord{" +
+                "customerID='" + customerID + '\'' +
+                ", billingMonth='" + billingMonth + '\'' +
+                ", currentMeterReadingRegular=" + currentMeterReadingRegular +
+                ", currentMeterReadingPeak=" + currentMeterReadingPeak +
+                ", readingEntryDate='" + readingEntryDate + '\'' +
+                ", costOfElectricity=" + costOfElectricity +
+                ", salesTaxAmount=" + salesTaxAmount +
+                ", fixedCharges=" + fixedCharges +
+                ", totalBillingAmount=" + totalBillingAmount +
+                ", dueDate='" + dueDate + '\'' +
+                ", billPaidStatus=" + billPaidStatus +
+                ", billPaymentDate='" + billPaymentDate + '\'' +
+                '}';
     }
 
     public String getCustomerID() {

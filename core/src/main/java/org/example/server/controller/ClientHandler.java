@@ -2,6 +2,7 @@ package org.example.server.controller;
 
 import org.example.commons.model.Customer;
 import org.example.commons.model.Employee;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.naming.AuthenticationException;
@@ -29,6 +30,8 @@ public class ClientHandler implements Runnable {
         this.clientSocket = clientSocket;
     }
 
+    private static final String REQUEST_DELIMITER = "\r\n\r\n";
+
     @Override
     public void run() {
         try (InputStream input = clientSocket.getInputStream();
@@ -39,19 +42,22 @@ public class ClientHandler implements Runnable {
             StringBuilder requestBuilder = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
-                if ("END".equals(line)) {
-                    break; // End of request
-                }
-                requestBuilder.append(line);
+                System.out.println("read: " + line);
+                if(line.isEmpty()) break;
+                requestBuilder.append(line).append("\n");
             }
 
-            System.out.println(requestBuilder);
 
-            JSONObject request = new JSONObject(requestBuilder.toString());
+            String requestString = requestBuilder.toString();
+            System.out.println("Request: " + requestString);
+
+
+            JSONObject request = new JSONObject(requestString);
             JSONObject response = processRequest(request);
 
-            writer.println(response.toString(4)); // Send response to the client
+            System.out.println("Response: " + response.toString());
 
+            writer.println(response.toString(4));
         } catch (IOException e) {
             System.err.println("Error handling client request: " + e.getMessage());
         } finally {
@@ -63,16 +69,16 @@ public class ClientHandler implements Runnable {
         }
     }
 
+
+
     private JSONObject processRequest(JSONObject request) {
         try {
-            // Extract fields from request
             String operation = request.optString("operation", "");
             String subject = request.optString("subject", "");
             String username = request.optString("username", "");
             String password = request.optString("password", "");
             JSONObject parameters = request.optJSONObject("parameters");
 
-            // Validate operation and subject
             if (!VALID_COMBINATIONS.containsKey(operation)) {
                 return createErrorResponse("Invalid operation: " + operation);
             }
@@ -80,7 +86,8 @@ public class ClientHandler implements Runnable {
                 return createErrorResponse("Invalid subject for operation '" + operation + "': " + subject);
             }
 
-            // Process request
+            System.out.println(request);
+
             return switch (operation) {
                 case "read" -> handleRead(subject, parameters, username, password);
                 case "create" -> handleCreate(subject, parameters, username, password);
@@ -114,6 +121,16 @@ public class ClientHandler implements Runnable {
                     EmployeeMenu employeeMenu = new EmployeeMenu(new Employee(username, password));
                     String resultBody = employeeMenu.viewBillReports();
                     return createSuccessResponse(resultBody);
+                }
+                case "estimateUpcomingBill" -> {
+                    authenticateUser(username, password);
+                    CustomerMenu customerMenu = new CustomerMenu(EmployeeMenu.getCustomerFromID(username));
+                    return createSuccessResponse("Bill estimated!");
+                }
+                case "loginStatus" -> {
+                    UserWrapper userWrapper = new UserWrapper();
+                    int loginStatus = userWrapper.getLoginStatus(username, password);
+                    return createSuccessResponse(String.valueOf(loginStatus));
                 }
                 default -> {
                     return createErrorResponse("Invalid subject for read operation: " + subject);
@@ -150,7 +167,26 @@ public class ClientHandler implements Runnable {
     private JSONObject handleUpdate(String subject, JSONObject parameters, String username, String password) {
         try {
             authenticateEmployee(username, password);
-            return createSuccessResponse(subject + " updated successfully.");
+            switch (subject) {
+                case "CNICExpiry" -> {
+                    if (parameters == null || !parameters.has("customerId") || !parameters.has("newCNICExpiryDate")) {
+                        return createErrorResponse("Missing parameters for updating CNIC expiry date.");
+                    }
+
+                    String customerId = parameters.getString("customerId");
+                    String newCNICExpiryDate = parameters.getString("newCNICExpiryDate");
+
+                    CustomerMenu customerMenu = new CustomerMenu(EmployeeMenu.getCustomerFromID(customerId));
+
+                    boolean updateResult = customerMenu.updateCNICExpiry(newCNICExpiryDate);
+                    if (Boolean.TRUE.equals(updateResult)) {
+                        return createSuccessResponse("CNIC expiry updated successfully.");
+                    } else {
+                        return createErrorResponse("Failed to update CNIC expiry.");
+                    }
+                }
+                default -> throw new IllegalStateException("Unexpected value: " + subject);
+            }
         } catch (AuthenticationException e) {
             return createErrorResponse("Authentication failed: " + e.getMessage(), 401);
         } catch (Exception e) {
@@ -172,6 +208,13 @@ public class ClientHandler implements Runnable {
     private void authenticateEmployee(String username, String password) throws AuthenticationException {
         LoginMenu loginMenu = new LoginMenu();
         if (loginMenu.login(username, password) != LoginMenu.EMPLOYEE_ID) {
+            throw new AuthenticationException("Unauthorized User!");
+        }
+    }
+
+    private void authenticateUser(String username, String password) throws AuthenticationException {
+        LoginMenu loginMenu = new LoginMenu();
+        if (loginMenu.login(username, password) != LoginMenu.CUSTOMER_ID) {
             throw new AuthenticationException("Unauthorized User!");
         }
     }

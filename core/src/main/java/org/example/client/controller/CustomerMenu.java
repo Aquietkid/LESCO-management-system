@@ -1,10 +1,11 @@
 package org.example.client.controller;
 
+import org.example.client.ServerParams;
 import org.example.client.view.BillEstimator;
 import org.example.client.view.BillViewer;
-import org.example.client.view.CNICUpdateScreen;
 import org.example.client.view.CustomerMenuScreen;
 import org.example.commons.model.*;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -13,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class CustomerMenu extends Menu {
@@ -38,13 +38,13 @@ public class CustomerMenu extends Menu {
     public void executeMenuTask(int choice, JFrame customerMenu) {
         switch (choice) {
             case CustomerMenuScreen.VIEW_BILL:
-                viewBills(MasterPersistence.getInstance().getBillingRecords());
+                viewBills();
                 break;
             case CustomerMenuScreen.ESTIMATE_UPCOMING_BILL:
                 estimateUpcomingBills(MasterPersistence.getInstance().getTariffTaxes());
                 break;
             case CustomerMenuScreen.UPDATE_CNIC_EXPIRY:
-                updateCNICExpiry(MasterPersistence.getInstance().getNadraRecords());
+//                updateCNICExpiry();
                 break;
             case CustomerMenuScreen.EXIT:
                 customerMenu.dispose();
@@ -54,54 +54,24 @@ public class CustomerMenu extends Menu {
         }
     }
 
-    private void updateCNICExpiry(ArrayList<NADRARecord> nadraRecords) {
-        new CNICUpdateScreen(nadraRecords, myCustomer);
-        // TODO: connect to server for logic (read, write, update, delete, each and everything inside server, nothing inside client)
-    }
-
-    private void viewBills(ArrayList<BillingRecord> billingRecords) {
-        BillViewer billViewer = new BillViewer();
-        for (BillingRecord br : billingRecords) {
-            if (br.getCustomerID().equals(myCustomer.getUsername())) {
-
-                String row = br.toFileString();
-                String[] rowData = row.trim().split(",");
-                billViewer.addRow(rowData);
-            }
-        }
-    }
-
-    public void estimateUpcomingBills(ArrayList<TariffTax> tariffTaxes) {
+    public boolean updateCNICExpiry(String newCNICExpiryDate) {
         JSONObject request = new JSONObject();
-        request.put("operation", "read");
-        request.put("subject", "estimateUpcomingBill");
+        request.put("operation", "update");
+        request.put("subject", "CNICExpiry");
+
+        JSONObject parameters = new JSONObject();
+        parameters.put("customerId", myCustomer.getCustomerID());
+        parameters.put("newCNICExpiryDate", newCNICExpiryDate);
+        request.put("parameters", parameters);
+
         request.put("username", myCustomer.getUsername());
         request.put("password", myCustomer.getPassword());
 
-        JSONObject parameters = new JSONObject();
-        parameters.put("customerID", myCustomer.getCustomerID());
-        parameters.put("isCommercial", myCustomer.getIsCommercial());
-        parameters.put("isThreePhase", myCustomer.getThreePhase());
-
-
-        TariffTax tariffTax = TariffTax.getTariffTax(tariffTaxes, myCustomer);
-        if (tariffTax != null) {
-            parameters.put("regularUnitPrice", tariffTax.getRegularUnitPrice());
-            parameters.put("peakHourUnitPrice", tariffTax.getPeakHourUnitPrice());
-            parameters.put("taxPercentage", tariffTax.getTaxPercentage());
-        } else {
-            JOptionPane.showMessageDialog(null, "Tariff details not found!", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        request.put("parameters", parameters);
-
-        try (Socket socket = new Socket("192.168.47.232", 12345);
+        try (Socket socket = new Socket(ServerParams.ServerIP, ServerParams.ServerPort);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
-            out.println(request.toString());
-            out.println("END");
+            out.println(request);
 
             StringBuilder responseBuilder = new StringBuilder();
             String responseLine;
@@ -110,20 +80,127 @@ public class CustomerMenu extends Menu {
             }
 
             JSONObject response = new JSONObject(responseBuilder.toString());
-            if ("success".equalsIgnoreCase(response.getString("status"))) {
-                // display the estimated bill
-                double estimatedBill = response.getDouble("resultBody");
-                JOptionPane.showMessageDialog(null, "Estimated Upcoming Bill: " + estimatedBill,
-                        "Estimate Successful", JOptionPane.INFORMATION_MESSAGE);
+            if ("success".equalsIgnoreCase(response.getString("status")) && response.getInt("returnCode") == 200) {
+                return true;
+            }
+            return false;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error communicating with the server: " + e.getMessage());
+        }
+    }
+
+
+    private void viewBills() {
+        JSONObject request = new JSONObject();
+        request.put("operation", "read");
+        request.put("subject", "BillingRecords");
+
+        JSONObject parameters = new JSONObject();
+        parameters.put("customerId", myCustomer.getUsername());
+        request.put("parameters", parameters);
+
+        request.put("username", myCustomer.getUsername());
+        request.put("password", myCustomer.getPassword());
+
+        try (Socket socket = new Socket(ServerParams.ServerIP, ServerParams.ServerPort);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+            out.println(request.toString());
+
+            StringBuilder responseBuilder = new StringBuilder();
+            String responseLine;
+            while ((responseLine = in.readLine()) != null && !responseLine.isEmpty()) {
+                responseBuilder.append(responseLine);
+            }
+
+            JSONObject response = new JSONObject(responseBuilder.toString());
+            if ("success".equalsIgnoreCase(response.getString("status")) && response.getInt("returnCode") == 200) {
+                JSONArray billingRecords = response.getJSONArray("resultBody");
+
+                BillViewer billViewer = new BillViewer();
+                for (int i = 0; i < billingRecords.length(); i++) {
+                    JSONObject record = billingRecords.getJSONObject(i);
+                    String[] rowData = {
+                            record.getString("customerID"),
+                            record.getString("billingMonth"),
+                            record.getString("regularUnits"),
+                            record.optString("peakUnits", "N/A"),
+                            record.getString("electricityCost"),
+                            record.getString("salesTax"),
+                            record.getString("fixedCharges"),
+                            record.getString("totalAmount"),
+                            record.getString("dueDate"),
+                            record.getString("status")
+                    };
+                    billViewer.addRow(rowData);
+                }
+
             } else {
-                JOptionPane.showMessageDialog(null, "Error: " + response.getString("resultBody"),
-                        "Error", JOptionPane.ERROR_MESSAGE);
+                throw new RuntimeException("Error fetching billing records: " + response.getString("resultBody"));
             }
 
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error communicating with server: " + e.getMessage(),
-                    "Communication Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+            throw new RuntimeException("Error communicating with the server: " + e.getMessage());
         }
+    }
+
+    public void estimateUpcomingBills(ArrayList<TariffTax> tariffTaxes) {
+//        JSONObject request = new JSONObject();
+//        request.put("operation", "read");
+//        request.put("subject", "estimateUpcomingBill");
+//        request.put("username", myCustomer.getUsername());
+//        request.put("password", myCustomer.getPassword());
+//
+//        JSONObject parameters = new JSONObject();
+//        parameters.put("customerID", myCustomer.getCustomerID());
+//        parameters.put("isCommercial", myCustomer.getIsCommercial());
+//        parameters.put("isThreePhase", myCustomer.getThreePhase());
+//
+//
+//        TariffTax tariffTax = TariffTax.getTariffTax(tariffTaxes, myCustomer);
+//        if (tariffTax != null) {
+//            parameters.put("regularUnitPrice", tariffTax.getRegularUnitPrice());
+//            parameters.put("peakHourUnitPrice", tariffTax.getPeakHourUnitPrice());
+//            parameters.put("taxPercentage", tariffTax.getTaxPercentage());
+//        } else {
+//            JOptionPane.showMessageDialog(null, "Tariff details not found!", "Error", JOptionPane.ERROR_MESSAGE);
+//            return;
+//        }
+//
+//        request.put("parameters", parameters);
+//
+//        try (Socket socket = new Socket(ServerParams.ServerIP, ServerParams.ServerPort);
+//             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+//             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+//
+//            out.println(request.toString());
+//
+//            StringBuilder responseBuilder = new StringBuilder();
+//            String responseLine;
+//            while ((responseLine = in.readLine()) != null && !responseLine.isEmpty()) {
+//                responseBuilder.append(responseLine);
+//            }
+//
+//            JSONObject response = new JSONObject(responseBuilder.toString());
+//            if ("success".equalsIgnoreCase(response.getString("status"))) {
+//                double estimatedBill = response.getDouble("resultBody");
+//                JOptionPane.showMessageDialog(null, "Estimated Upcoming Bill: " + estimatedBill,
+//                        "Estimate Successful", JOptionPane.INFORMATION_MESSAGE);
+//            } else {
+//                JOptionPane.showMessageDialog(null, "Error: " + response.getString("resultBody"),
+//                        "Error", JOptionPane.ERROR_MESSAGE);
+//            }
+//
+//        } catch (IOException e) {
+//            JOptionPane.showMessageDialog(null, "Error communicating with server: " + e.getMessage(),
+//                    "Communication Error", JOptionPane.ERROR_MESSAGE);
+//        }
+
+        new BillEstimator(myCustomer);
     }
 
 }

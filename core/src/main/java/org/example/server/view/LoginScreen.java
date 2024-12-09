@@ -1,5 +1,6 @@
 package org.example.server.view;
 
+import org.example.client.ServerParams;
 import org.example.commons.model.MasterPersistence;
 import org.example.server.controller.ClientHandler;
 
@@ -53,17 +54,17 @@ public class LoginScreen {
     }
 
     private void startServer() {
-        int port = 12345; // Replace with your desired port number
         startServerButton.setEnabled(false); // Disable the button once clicked
 
         new Thread(() -> {
-            try (ServerSocket serverSocket = new ServerSocket(port)) {
+            try (ServerSocket serverSocket = new ServerSocket(ServerParams.ServerPort)) {
                 JOptionPane.showMessageDialog(frame,
-                        "Server started successfully on port " + port,
+                        "Server started successfully on port " + ServerParams.ServerPort,
                         "Server Status", JOptionPane.INFORMATION_MESSAGE);
 
                 while (true) {
                     Socket clientSocket = serverSocket.accept();
+                    System.out.println("Connected to client!");
                     new Thread(new ClientHandler(clientSocket)).start();
                 }
             } catch (IOException e) {

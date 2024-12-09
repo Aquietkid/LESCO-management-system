@@ -38,13 +38,12 @@ public class UserWrapper {
 
         int result = LoginMenu.UNKNOWN_ID;
 
-        try (Socket socket = new Socket(ServerParams.ServerIP, 12345);
+        try (Socket socket = new Socket(ServerParams.ServerIP, ServerParams.ServerPort);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
-            // Send the request with a newline
             System.out.println(request);
-            out.println(request);
+            out.println(request.toString(4) + "\n");
 
             StringBuilder responseBuilder = new StringBuilder();
             String responseLine;
@@ -60,15 +59,6 @@ public class UserWrapper {
             }
 
         }
-
-        /*LoginMenu loginMenu = new LoginMenu();
-        int loginStatus = loginMenu.login(username, password);
-        if (loginStatus == LoginMenu.EMPLOYEE_ID) {
-            this.setMyUser(new Employee(username, password));
-        } else if (loginStatus == LoginMenu.CUSTOMER_ID) {
-            this.setMyUser(Customer.getMatchingCustomer(username, password));
-        } else this.setMyUser(null);
-        return loginStatus;*/
 
     }
 

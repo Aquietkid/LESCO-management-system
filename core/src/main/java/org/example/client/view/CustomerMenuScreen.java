@@ -28,7 +28,7 @@ public class CustomerMenuScreen extends JFrame {
         estimateUpcomingBillButton.addActionListener(e -> customerMenu.executeMenuTask(ESTIMATE_UPCOMING_BILL, this));
 
         JButton updateCNICExpiryButton = new JButton("Update CNIC Expiry");
-        updateCNICExpiryButton.addActionListener(e -> customerMenu.executeMenuTask(UPDATE_CNIC_EXPIRY, this));
+        updateCNICExpiryButton.addActionListener(e -> new CNICUpdateScreen(customerMenu, this));
 
         JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(e -> dispose());
